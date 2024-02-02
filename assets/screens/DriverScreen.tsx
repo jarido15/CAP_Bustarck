@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import * as React from 'react';
 import {StyleSheet, View, Text, Image} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
