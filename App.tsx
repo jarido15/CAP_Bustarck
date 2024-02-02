@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable react-native/no-inline-styles */
 import * as React from 'react';
@@ -10,8 +11,7 @@ import DriverScreen from './assets/screens/DriverScreen';
 import MapScreen from './assets/screens/MapScreen';
 import GuideScreen from './assets/screens/GuideScreen';
 import ScheduleScreen from './assets/screens/ScheduleScreen'; // Import the ScheduleScreen component
-import { View, Image, Text, TouchableOpacity } from 'react-native';
-import BottomSheet from 'react-native-raw-bottom-sheet';
+import { View, Image, Text } from 'react-native';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();

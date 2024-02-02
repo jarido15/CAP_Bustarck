@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { firestore2 } from './firebase'; // Import the firestore2 instance
@@ -18,11 +19,9 @@ const ScheduleScreen = () => {
         console.error('Error fetching trips:', error);
       }
     };
-  
     fetchTrips();
   }, []);
-  
-  
+
 
   console.log('Component rendered, trips:', trips); // Log component rendering and trips state
 
