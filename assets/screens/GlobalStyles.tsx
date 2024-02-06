@@ -1,3 +1,5 @@
+/* eslint-disable quotes */
+/* eslint-disable prettier/prettier */
 /* fonts */
 export const FontFamily = {
   jostLight: 'Jost-Light',
