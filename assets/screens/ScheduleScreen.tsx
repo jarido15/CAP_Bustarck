@@ -1,93 +1,85 @@
 /* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
-import { firestore2 } from './firebase'; // Import the firestore2 instance
+import { firestore2 } from './firebase';
 
 const ScheduleScreen = () => {
   const [trips, setTrips] = useState([]);
-  const [busId, setBusId] = useState(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const fetchTripsAndBusId = async () => {
-    setIsRefreshing(true); // Set refreshing state to true
-
+  const fetchTripInfo = async () => {
     try {
-      console.log('Fetching trips and bus ID...');
-      // Access the document under 'Drivers' collection directly
-      const driverDocRef = firestore2.collection('Drivers').doc('kng9UgjhRESsT4nYtOAT5ResbPJ2');
+      const driversSnapshot = await firestore2.collection('Drivers').get();
+      const tripsData = [];
 
-      // Get the document snapshot
-      const driverDocSnapshot = await driverDocRef.get();
+      for (const driverDoc of driversSnapshot.docs) {
+        const tripsCollectionRef = driverDoc.ref.collection('Trip_Info');
+        const querySnapshot = await tripsCollectionRef.orderBy('createdAt', 'desc').limit(1).get();
 
-      // Check if the document exists
-      if (driverDocSnapshot.exists) {
-        const driverData = driverDocSnapshot.data();
-        console.log('Driver data:', driverData);
+        querySnapshot.forEach(async (doc) => {
+          console.log('Driver ID:', driverDoc.id); // Log driver document ID
+          console.log('Fetched document:', doc.id, doc.data()); // Log fetched document
+          const { AvailableSeats, AvailableTime, DateOfTrip, DepartureTime, Route } = doc.data();
 
-        // Retrieve the busId field from the document data
-        const busIdFromFirestore = driverData.busId;
-        setBusId(busIdFromFirestore);
-      } else {
-        console.log('Driver document does not exist.');
-      }
+          // Get busPlateNumber from the Driver collection
+          const driverData = await driverDoc.ref.get();
+          const busPlateNumber = driverData.data().busPlateNumber;
 
-      // Access the 'Trip_Info' subcollection and fetch trips
-      const tripsCollectionRef = driverDocRef.collection('Trip_Info');
-      const tripsSnapshot = await tripsCollectionRef.get();
-
-      if (!tripsSnapshot.empty) {
-        const tripsData = [];
-        tripsSnapshot.forEach(doc => {
-          tripsData.push({ id: doc.id, ...doc.data() });
+          tripsData.push({
+            driverId: driverDoc.id, // Include driver ID in the trips data
+            tripId: doc.id,
+            busPlateNumber,
+            AvailableSeats,
+            AvailableTime,
+            DateOfTrip,
+            DepartureTime,
+            Route,
+          });
         });
-        console.log('Trips data:', tripsData);
-        setTrips(tripsData);
-      } else {
-        console.log('No trips found in the trips subcollection.');
       }
+
+      console.log('Trips data:', tripsData); // Log fetched data
+      setTrips(tripsData);
     } catch (error) {
-      console.error('Error fetching trips and bus ID:', error);
+      console.error('Error fetching trip information:', error.message); // Log error message
     } finally {
-      setIsRefreshing(false); // Set refreshing state to false
+      setIsRefreshing(false);
     }
   };
 
   useEffect(() => {
-    fetchTripsAndBusId();
+    fetchTripInfo();
   }, []);
 
   const handleRefresh = () => {
-    fetchTripsAndBusId();
+    setIsRefreshing(true);
+    fetchTripInfo();
   };
-
-  const handleEndReached = () => {
-    // When the end of the list is reached, trigger a refresh
-    fetchTripsAndBusId();
-  };
-
-  console.log('Component rendered, trips:', trips); // Log component rendering and trips state
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={trips}
-        renderItem={({ item, index }) => (
-          <View key={index} style={styles.tripContainer}>
-            <Text style={{ color: 'black', fontWeight: 'bold' }}>Trip {index + 1}</Text>
-            <Text style={{ color: 'black', fontWeight: 'bold' }}>Date Of Trip: {item.DateOfTrip}</Text>
-            <Text style={{ color: 'black', fontWeight: 'bold' }}>Available Time: {item.AvailableTime}</Text>
-            <Text style={{ color: 'black', fontWeight: 'bold' }}>Departure Time: {item.DepartureTime}</Text>
-            <Text style={{ color: 'black', fontWeight: 'bold' }}>Available Seats: {item.AvailableSeats}</Text>
-            <Text style={{ color: 'black', fontWeight: 'bold' }}>Route: {item.Route}</Text>
-            <Text style={{ color: 'black', fontWeight: 'bold' }}>Bus ID: {busId}</Text>
-          </View>
-        )}
-        keyExtractor={(_item, index) => index.toString()}
-        onRefresh={handleRefresh}
-        refreshing={isRefreshing}
-        onEndReached={handleEndReached}
-        onEndReachedThreshold={0.1}
-      />
+      {trips.length === 0 ? (
+        <Text style={{color: '#828282'}}>No trips available</Text>
+      ) : (
+        <FlatList
+          data={trips}
+          renderItem={({ item, index }) => (
+            <View key={index} style={styles.tripContainer}>
+              <Text>Bus Plate Number: {item.busPlateNumber}</Text>
+              <Text>Available Seats: {item.AvailableSeats}</Text>
+              <Text>Available Time: {item.AvailableTime}</Text>
+              <Text>Date of Trip: {item.DateOfTrip}</Text>
+              <Text>Departure Time: {item.DepartureTime}</Text>
+              <Text>Route: {item.Route}</Text>
+              {/* Render other trip details as needed */}
+            </View>
+          )}
+          keyExtractor={(item, index) => index.toString()}
+          onRefresh={handleRefresh}
+          refreshing={isRefreshing}
+          onEndReachedThreshold={0.1}
+        />
+      )}
     </View>
   );
 };
