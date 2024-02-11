@@ -1,7 +1,6 @@
-/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import React, { useState, useRef, useEffect } from 'react';
-import { StyleSheet, View, Text, Dimensions, Image } from 'react-native';
+import { StyleSheet, View, Text, Dimensions, Image, BackHandler, Alert } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import { useNavigation } from '@react-navigation/native';
 import { firestore2 } from '../screens/firebase'; // Import your Firestore instance
@@ -27,7 +26,7 @@ interface DriverInfo {
 const CustomMarker = ({ coordinate, title, description }) => {
   return (
     <Marker coordinate={coordinate} title={title}>
-      <Image source={customMarkerImage} style={{position: 'absolute', width: 40, height: 40 }} />
+      <Image source={customMarkerImage} style={{ position: 'absolute', width: 40, height: 40 }} />
       <Callout>
         <View style={styles.calloutContainer}>
           <Text>{description}</Text>
@@ -49,6 +48,23 @@ const Mapscreen = () => {
     busPlateNumber: '',
     busId: '',
   });
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      Alert.alert(
+        'Exit App',
+        'Are you sure you want to exit?',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'OK', onPress: () => BackHandler.exitApp() }
+        ],
+        { cancelable: false }
+      );
+      return true;
+    });
+
+    return () => backHandler.remove();
+  }, []);
 
   useEffect(() => {
     const unsubscribe = firestore2
@@ -80,7 +96,7 @@ const Mapscreen = () => {
           const { latitude, longitude } = tripData;
           console.log('Driver location:', latitude, longitude);
           setDriverLocation({ latitude, longitude });
-  
+
           // Center the map on the driver's location
           if (mapRef.current) {
             mapRef.current.animateToRegion({
@@ -92,7 +108,7 @@ const Mapscreen = () => {
           }
         });
       });
-  
+
     return () => unsubscribe();
   }, []);
 

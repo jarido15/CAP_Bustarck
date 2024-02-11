@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -9,14 +9,44 @@ import {
   Dimensions,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {FontSize, FontFamily, Color} from './GlobalStyles';
-import {useNavigation} from '@react-navigation/native';
-import {request, PERMISSIONS} from 'react-native-permissions';
-
+import { FontSize, FontFamily, Color } from './GlobalStyles';
+import { useNavigation } from '@react-navigation/native';
+import { request, PERMISSIONS } from 'react-native-permissions';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const WelcomeScreen = () => {
   const navigation = useNavigation();
-  const {width, height} = Dimensions.get('window');
+  const { width, height } = Dimensions.get('window');
+
+  // Function to check if it's the first time the user is using the app
+  const checkFirstTime = async () => {
+    try {
+      const isFirstTime = await AsyncStorage.getItem('isFirstTime');
+      if (isFirstTime === null) {
+        // If it's the first time, set the flag in AsyncStorage
+        await AsyncStorage.setItem('isFirstTime', 'false');
+        return true; // First time
+      } else {
+        return false; // Not the first time
+      }
+    } catch (error) {
+      console.error('Error checking first time:', error);
+      return true; // Assume it's the first time if error occurs
+    }
+  };
+
+  useEffect(() => {
+    // Check if it's the first time using the app
+    checkFirstTime().then((isFirstTime) => {
+      if (!isFirstTime) {
+        // If not the first time, navigate to the map screen
+        navigation.navigate('MapScreen');
+      }
+    });
+
+    // Request location permission when the component mounts
+    requestLocationPermission();
+  }, []);
 
   // Function to request location permission
   const requestLocationPermission = async () => {
@@ -31,11 +61,6 @@ const WelcomeScreen = () => {
       console.warn(err);
     }
   };
-
-  // Use useEffect to request location permission when the component mounts
-  useEffect(() => {
-    requestLocationPermission();
-  }, []);
 
   const handleCommuterPress = () => {
     navigation.navigate('MapScreen'); // Navigate to the MapScreen for the Commuter
@@ -74,8 +99,7 @@ const WelcomeScreen = () => {
   );
 };
 
-// Initialize Dimensions outside the component
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   welcomescreenChild: {
