@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
+/* eslint-disable react-native/no-inline-styles */
 import React, { useState, useRef, useEffect } from 'react';
-import { StyleSheet, View, Text, Dimensions, Image, BackHandler, Alert } from 'react-native';
+import { StyleSheet, View, Text, Dimensions, Image, BackHandler, Alert, TouchableOpacity } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import { useNavigation } from '@react-navigation/native';
 import { firestore2, auth2, auth3 } from '../screens/firebase'; // Import your Firestore and auth instances
@@ -42,6 +43,9 @@ const Mapscreen = () => {
 
   const [driverLocation, setDriverLocation] = useState<{ [key: string]: DriverLocation }>({});
   const [driverInfo, setDriverInfo] = useState<{ [key: string]: DriverInfo }>({});
+  const [selectedRoute, setSelectedRoute] = useState('');
+  const [open, setOpen] = useState(false);
+  const [pinLocation, setPinLocation] = useState<DriverLocation | null>(null);
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
@@ -108,8 +112,40 @@ const Mapscreen = () => {
     fetchDriverLocations();
   }, []);
 
+  const handleMapPress = (event: any) => {
+    const { latitude, longitude } = event.nativeEvent.coordinate;
+    setPinLocation({ latitude, longitude });
+  };
+
   return (
     <View style={styles.container}>
+      {/* Dropdown container */}
+      <View style={styles.dropdownContainer}>
+        <TouchableOpacity
+          onPress={() => setOpen(!open)}
+          style={[styles.routeButton, open && styles.openDropdown]}
+        >
+          <Text style={styles.routeButtonText}>{selectedRoute || 'Select Route'}</Text>
+        </TouchableOpacity>
+        {open && (
+          <View style={styles.dropdownMenu}>
+            {['Pinamalayan - Calapan', 'Calapan - Pinamalayan'].map((route, index) => (
+              <TouchableOpacity
+                key={index}
+                onPress={() => {
+                  setSelectedRoute(route);
+                  setOpen(false);
+                }}
+                style={styles.dropdownItem}
+              >
+                <Text>{route}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
+      </View>
+
+      {/* MapView component */}
       <MapView
         ref={mapRef}
         style={styles.map}
@@ -119,6 +155,7 @@ const Mapscreen = () => {
           latitudeDelta: 0.011,
           longitudeDelta: 0.011,
         }}
+        onPress={handleMapPress}
       >
         {Object.keys(driverLocation).map(driverId => (
           <CustomMarker
@@ -130,6 +167,11 @@ const Mapscreen = () => {
             Plate Number: ${driverInfo[driverId]?.busPlateNumber}`}
           />
         ))}
+        {pinLocation && (
+          <Marker coordinate={pinLocation}>
+            <Image source={require('../images/pin4.png')} style={{ width: 32, height: 32 }} />
+          </Marker>
+        )}
       </MapView>
     </View>
   );
@@ -138,6 +180,40 @@ const Mapscreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  dropdownContainer: {
+    position: 'absolute',
+    top: '3%',
+    left: '10%',
+    width: '80%',
+    height: '10%',
+    zIndex: 1,
+  },
+  routeButton: {
+    backgroundColor: '#fff',
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+  },
+  openDropdown: {
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+  },
+  dropdownMenu: {
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    marginTop: 5,
+  },
+  dropdownItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  routeButtonText: {
+    fontSize: 16,
   },
   map: {
     flex: 1,
