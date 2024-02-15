@@ -1,16 +1,15 @@
-/* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
+/* eslint-disable prettier/prettier */
 import React, { useState, useRef, useEffect } from 'react';
-import { StyleSheet, View, Text, Dimensions, Image, BackHandler, Alert, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, Dimensions, Image, BackHandler, Alert, TouchableOpacity, Modal, PanResponder, TouchableWithoutFeedback } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import { useNavigation } from '@react-navigation/native';
-import { firestore2, auth2, auth3 } from '../screens/firebase'; // Import your Firestore and auth instances
+import { firestore3, auth3, firestore2 } from '../screens/firebase';
+import Geolocation from '@react-native-community/geolocation';
 
 const { width, height } = Dimensions.get('window');
-
 const customMarkerImage = require('../images/busstop.png');
 
-// Define the type for the driver location
 interface DriverLocation {
   latitude: number;
   longitude: number;
@@ -27,7 +26,7 @@ interface DriverInfo {
 const CustomMarker = ({ coordinate, title, description }) => {
   return (
     <Marker coordinate={coordinate} title={title}>
-     <Image source={customMarkerImage} style={{ width: 62, height: 62 }} />
+      <Image source={customMarkerImage} style={{ width: 62, height: 62 }} />
       <Callout>
         <View style={styles.calloutContainer}>
           <Text style={{ color: 'black', fontSize: 11 }}>{description}</Text>
@@ -40,12 +39,14 @@ const CustomMarker = ({ coordinate, title, description }) => {
 const Mapscreen = () => {
   const navigation = useNavigation();
   const mapRef = useRef<MapView>(null);
-
   const [driverLocation, setDriverLocation] = useState<{ [key: string]: DriverLocation }>({});
   const [driverInfo, setDriverInfo] = useState<{ [key: string]: DriverInfo }>({});
   const [selectedRoute, setSelectedRoute] = useState('');
   const [open, setOpen] = useState(false);
   const [pinLocation, setPinLocation] = useState<DriverLocation | null>(null);
+  const [userLocation, setUserLocation] = useState<DriverLocation | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
@@ -65,6 +66,46 @@ const Mapscreen = () => {
   }, []);
 
   useEffect(() => {
+    const unsubscribe = auth3.signInAnonymously()
+      .then(() => {
+        console.log('Anonymous login successful');
+      })
+      .catch(error => {
+        console.error('Error signing in anonymously:', error);
+      });
+
+    return () => unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    Geolocation.getCurrentPosition(
+      position => {
+        const { latitude, longitude } = position.coords;
+        setUserLocation({ latitude, longitude });
+      },
+      error => {
+        console.error('Error getting user location:', error);
+      },
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+    );
+  }, []);
+
+  const saveUserLocationToFirestore = (latitude, longitude) => {
+    firestore3.collection('UserLocations').add({
+      userId: auth3.currentUser.uid,
+      latitude,
+      longitude,
+      timestamp: new Date()
+    })
+    .then(() => {
+      console.log('User location saved to Firestore');
+    })
+    .catch(error => {
+      console.error('Error saving user location to Firestore:', error);
+    });
+  };
+
+  useEffect(() => {
     const fetchDriverLocations = async () => {
       try {
         const driversSnapshot = await firestore2.collection('Drivers').get();
@@ -79,8 +120,6 @@ const Mapscreen = () => {
                 const driverLocationData = tripDoc.data();
                 const { latitude, longitude } = driverLocationData;
                 const driverId = driverDoc.id;
-
-                console.log(`Driver ${driverDoc.id} is at latitude ${latitude} and longitude ${longitude}`);
 
                 setDriverLocation((prevState) => ({
                   ...prevState,
@@ -116,6 +155,59 @@ const Mapscreen = () => {
     const { latitude, longitude } = event.nativeEvent.coordinate;
     setPinLocation({ latitude, longitude });
   };
+
+  const handleShareLocation = () => {
+    // Proceed to share location only when the Share button is clicked
+    Geolocation.getCurrentPosition(
+      position => {
+        const { latitude, longitude } = position.coords;
+        setUserLocation({ latitude, longitude });
+        saveUserLocationToFirestore(latitude, longitude);
+      },
+      error => {
+        console.error('Error getting user location:', error);
+      },
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+    );
+
+    // Set modalVisible to true to show the modal
+    setModalVisible(true);
+  };
+
+  const deleteUserLocations = () => {
+    // Get the reference to the UserLocations collection
+    const userLocationsRef = firestore3.collection('UserLocations');
+  
+    // Query the UserLocations collection for documents owned by the current user
+    userLocationsRef.where('userId', '==', auth3.currentUser.uid).get()
+      .then(querySnapshot => {
+        // Delete each document found in the query
+        const deletionPromises: any[] = [];
+        querySnapshot.forEach(doc => {
+          deletionPromises.push(doc.ref.delete());
+        });
+        // Wait for all deletions to complete
+        return Promise.all(deletionPromises);
+      })
+      .then(() => {
+        console.log('UserLocations data deleted successfully.');
+        setUserLocation(null); // Reset userLocation state to null
+        setModalVisible(false); // Close the modal after successful deletion
+      })
+      .catch(error => {
+        console.error('Error deleting UserLocations data:', error);
+        // Handle error if needed
+      });
+  };
+  
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderMove: (_, gestureState) => {
+        setModalPosition({ x: gestureState.dx, y: gestureState.dy });
+      },
+    })
+  ).current;
 
   return (
     <View style={styles.container}>
@@ -157,6 +249,7 @@ const Mapscreen = () => {
         }}
         onPress={handleMapPress}
       >
+        {/* Display driver locations */}
         {Object.keys(driverLocation).map(driverId => (
           <CustomMarker
             key={driverId}
@@ -167,12 +260,67 @@ const Mapscreen = () => {
             Plate Number: ${driverInfo[driverId]?.busPlateNumber}`}
           />
         ))}
+
+        {/* Display user location marker if available */}
+        {userLocation && (
+          <Marker coordinate={userLocation}>
+            <Image source={require('../images/user.png')} style={{ width: 50, height: 50 }} />
+          </Marker>
+        )}
+        
+        {/* Display pin location marker if available */}
         {pinLocation && (
           <Marker coordinate={pinLocation}>
             <Image source={require('../images/pin4.png')} style={{ width: 32, height: 32 }} />
           </Marker>
         )}
       </MapView>
+
+      {/* Button to share location */}
+      <TouchableOpacity
+        onPress={handleShareLocation}
+        style={styles.shareLocationButton}
+      >
+        <View style={styles.shareLocationBox}>
+          <Image source={require('../images/share.png')} style={styles.shareLocationImage} />
+        </View>
+      </TouchableOpacity>
+
+      {/* Modal for sharing location */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(true); // Close the modal on Android back button press
+        }}
+      >
+        <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
+          <View
+            style={[
+              styles.modalContainer,
+              { transform: [{ translateX: modalPosition.x }, { translateY: modalPosition.y }] },
+            ]}
+            {...panResponder.panHandlers}
+          >
+            <View style={styles.modalContent}>
+              <Text style={{fontWeight: 'bold', fontSize: 25, top: '-30%', color: 'black',}}>Note!</Text>
+              <Image source={require('../images/Line.png')} style={{width: '100%', height: '0.5%', top: '-25%',}}/>
+              <Text style={{fontWeight: '900', fontSize: 20, marginBottom: -25, marginTop: -25, color: 'black', justifyContent: 'space-between'}}> Please turn off your share location once you entered bus, Thank you!</Text>
+              {/* Button to delete UserLocations data */}
+              <TouchableOpacity
+                onPress={() => {
+                  deleteUserLocations();
+                  setModalVisible(false);
+                }}
+                style={styles.offshare}
+              >
+                <Text style={{color: 'white', fontWeight: 'bold'}}>Turn Off Share Location</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
     </View>
   );
 };
@@ -206,6 +354,7 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 5,
     marginTop: 5,
+    color: 'black',
   },
   dropdownItem: {
     padding: 10,
@@ -214,6 +363,7 @@ const styles = StyleSheet.create({
   },
   routeButtonText: {
     fontSize: 16,
+    color: 'black',
   },
   map: {
     flex: 1,
@@ -227,6 +377,46 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  shareLocationButton: {
+    position: 'absolute',
+    bottom: '20%',
+    right: '5%',
+    alignSelf: 'center',
+    borderRadius: 5,
+  },
+  shareLocationBox: {
+    borderWidth: 1,
+    borderColor: '#ffffff',
+    backgroundColor: 'white',
+    borderRadius: 5,
+    padding: 5,
+  },
+  shareLocationImage: {
+    width: 30,
+    height: 30,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    bottom: '-28%',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    width: '80%',
+    height: '30%',
+    borderRadius: 10,
+    padding: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  offshare: {
+    marginVertical: 10,
+    backgroundColor: 'blue',
+    padding: 10,
+    borderRadius: 20,
+    bottom: '-35%'
   },
 });
 

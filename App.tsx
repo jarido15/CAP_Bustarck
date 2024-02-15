@@ -50,7 +50,7 @@ function MapStack() {
                   top: 5,
                 }}>
                 <Image
-                  source={require('./assets/images/map.png')}
+                  source={require('./assets/images/MapMarker.png')}
                   resizeMode="contain"
                   style={{
                     top: -0.1,
