@@ -1,4 +1,5 @@
-/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable quotes */
+ /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import React, { useState, useRef, useEffect } from 'react';
 import { StyleSheet, View, Text, Dimensions, Image, BackHandler, Alert, TouchableOpacity, Modal, PanResponder, TouchableWithoutFeedback } from 'react-native';
@@ -78,10 +79,13 @@ const Mapscreen = () => {
   }, []);
 
   useEffect(() => {
+    // Fetch the user's current location using Geolocation
     Geolocation.getCurrentPosition(
       position => {
         const { latitude, longitude } = position.coords;
+        // Update userLocation with the fetched location
         setUserLocation({ latitude, longitude });
+        console.log('User Location:', { latitude, longitude });
       },
       error => {
         console.error('Error getting user location:', error);
@@ -93,6 +97,7 @@ const Mapscreen = () => {
   const saveUserLocationToFirestore = (latitude, longitude) => {
     firestore3.collection('UserLocations').add({
       userId: auth3.currentUser.uid,
+      status: "active",
       latitude,
       longitude,
       timestamp: new Date()
@@ -106,50 +111,78 @@ const Mapscreen = () => {
   };
 
   useEffect(() => {
-    const fetchDriverLocations = async () => {
-      try {
-        const driversSnapshot = await firestore2.collection('Drivers').get();
-
-        const unsubscribeCallbacks = driversSnapshot.docs.map((driverDoc) => {
-          return driverDoc.ref
-            .collection('Trips')
-            .orderBy('timestamp', 'desc')
-            .limit(1)
-            .onSnapshot((tripsSnapshot) => {
-              tripsSnapshot.forEach((tripDoc) => {
-                const driverLocationData = tripDoc.data();
-                const { latitude, longitude } = driverLocationData;
-                const driverId = driverDoc.id;
-
-                setDriverLocation((prevState) => ({
-                  ...prevState,
-                  [driverId]: { latitude, longitude },
-                }));
-
-                setDriverInfo((prevState) => ({
-                  ...prevState,
-                  [driverId]: {
-                    firstName: driverDoc.data().firstName,
-                    lastName: driverDoc.data().lastName,
-                    contactNumber: driverDoc.data().contactNumber,
-                    busPlateNumber: driverDoc.data().busPlateNumber,
-                    busId: driverDoc.data().busId,
-                  },
-                }));
-              });
-            });
-        });
-
-        return () => {
-          unsubscribeCallbacks.forEach(unsubscribe => unsubscribe());
-        };
-      } catch (error) {
-        console.error('Error fetching driver locations:', error);
-      }
-    };
-
-    fetchDriverLocations();
-  }, []);
+    // Only fetch driver locations if a route is selected
+    if (selectedRoute) {
+      // Clear existing driver locations and information
+      setDriverLocation({});
+      setDriverInfo({});
+  
+      const fetchDriverLocations = async () => {
+        try {
+          const driversSnapshot = await firestore2.collection('Drivers').get();
+  
+          const driverLocations = {}; // Temporary object to hold driver locations
+          const driverInfos = {}; // Temporary object to hold driver information
+  
+          driversSnapshot.forEach((driverDoc) => {
+            const driverData = driverDoc.data();
+            const driverRoute = driverData.Route;
+  
+            console.log('Driver Route:', driverRoute); // Log the driver route to debug
+  
+            // Check if the driver's route matches the selected route
+            if (driverRoute === selectedRoute) {
+              // Retrieve the latest trip information for the driver
+              driverDoc.ref
+                .collection('Trips')
+                .orderBy('timestamp', 'desc')
+                .limit(1)
+                .get()
+                .then((tripsSnapshot) => {
+                  tripsSnapshot.forEach((tripDoc) => {
+                    const driverLocationData = tripDoc.data();
+                    const { latitude, longitude } = driverLocationData;
+                    const driverId = driverDoc.id;
+  
+                    // Update temporary objects with driver location and information
+                    driverLocations[driverId] = { latitude, longitude };
+                    driverInfos[driverId] = {
+                      firstName: driverData.firstName,
+                      lastName: driverData.lastName,
+                      contactNumber: driverData.contactNumber,
+                      busPlateNumber: driverData.busPlateNumber,
+                      busId: driverData.busId,
+                    };
+                  });
+  
+                  // Update state with filtered driver locations and information
+                  setDriverLocation(driverLocations);
+                  setDriverInfo(driverInfos);
+                })
+                .catch((error) => {
+                  console.error('Error fetching driver trips:', error);
+                });
+            }
+          });
+        } catch (error) {
+          console.error('Error fetching drivers:', error);
+        }
+      };
+  
+      fetchDriverLocations();
+    } else {
+      // Clear existing driver locations if no route is selected
+      setDriverLocation({});
+      setDriverInfo({});
+    }
+  }, [selectedRoute]);
+  
+  
+  
+  
+   // Add selectedRoute as a dependency to trigger the effect when the route changes
+   // Add selectedRoute as a dependency to trigger the effect when the route changes
+  
 
   const handleMapPress = (event: any) => {
     const { latitude, longitude } = event.nativeEvent.coordinate;
@@ -181,25 +214,25 @@ const Mapscreen = () => {
     // Query the UserLocations collection for documents owned by the current user
     userLocationsRef.where('userId', '==', auth3.currentUser.uid).get()
       .then(querySnapshot => {
-        // Delete each document found in the query
-        const deletionPromises: any[] = [];
+        // Update the status of each document found in the query to 'inactive'
+        const updatePromises: any[] = [];
         querySnapshot.forEach(doc => {
-          deletionPromises.push(doc.ref.delete());
+          updatePromises.push(doc.ref.update({ status: 'inactive' }));
         });
-        // Wait for all deletions to complete
-        return Promise.all(deletionPromises);
+        // Wait for all updates to complete
+        return Promise.all(updatePromises);
       })
       .then(() => {
-        console.log('UserLocations data deleted successfully.');
+        console.log('User status updated successfully to inactive.');
         setUserLocation(null); // Reset userLocation state to null
-        setModalVisible(false); // Close the modal after successful deletion
+        setModalVisible(false); // Close the modal after successful status update
       })
       .catch(error => {
-        console.error('Error deleting UserLocations data:', error);
+        console.error('Error updating user status:', error);
         // Handle error if needed
       });
-  };
-  
+};
+
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
@@ -208,6 +241,11 @@ const Mapscreen = () => {
       },
     })
   ).current;
+  const handleSelectRoute = (Route) => {
+    console.log('Firest Selected Route:', Route); // Add this line to log the selected route
+    setSelectedRoute(Route);
+    setOpen(false);
+  };
 
   return (
     <View style={styles.container}>
@@ -224,10 +262,7 @@ const Mapscreen = () => {
             {['Pinamalayan - Calapan', 'Calapan - Pinamalayan'].map((route, index) => (
               <TouchableOpacity
                 key={index}
-                onPress={() => {
-                  setSelectedRoute(route);
-                  setOpen(false);
-                }}
+                onPress={() => handleSelectRoute(route)}
                 style={styles.dropdownItem}
               >
                 <Text>{route}</Text>
@@ -263,11 +298,12 @@ const Mapscreen = () => {
 
         {/* Display user location marker if available */}
         {userLocation && (
-          <Marker coordinate={userLocation}>
-            <Image source={require('../images/user.png')} style={{ width: 50, height: 50 }} />
-          </Marker>
-        )}
-        
+  <Marker coordinate={userLocation}>
+    <Image source={require('../images/user.png')} style={{ width: 50, height: 50 }} />
+  </Marker>
+)}
+
+
         {/* Display pin location marker if available */}
         {pinLocation && (
           <Marker coordinate={pinLocation}>
