@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable quotes */
  /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
@@ -117,65 +118,57 @@ const Mapscreen = () => {
       setDriverLocation({});
       setDriverInfo({});
   
-      const fetchDriverLocations = async () => {
-        try {
-          const driversSnapshot = await firestore2.collection('Drivers').get();
-  
+      const unsubscribe = firestore2.collection('Drivers')
+        .where('Route', '==', selectedRoute)
+        .onSnapshot(snapshot => {
           const driverLocations = {}; // Temporary object to hold driver locations
           const driverInfos = {}; // Temporary object to hold driver information
   
-          driversSnapshot.forEach((driverDoc) => {
+          snapshot.forEach(driverDoc => {
             const driverData = driverDoc.data();
-            const driverRoute = driverData.Route;
+            const driverId = driverDoc.id;
   
-            console.log('Driver Route:', driverRoute); // Log the driver route to debug
+            // Retrieve the latest trip information for the driver
+            driverDoc.ref.collection('Trips')
+              .orderBy('timestamp', 'desc')
+              .limit(1)
+              .onSnapshot(tripsSnapshot => {
+                tripsSnapshot.forEach(tripDoc => {
+                  const driverLocationData = tripDoc.data();
+                  const { latitude, longitude } = driverLocationData;
   
-            // Check if the driver's route matches the selected route
-            if (driverRoute === selectedRoute) {
-              // Retrieve the latest trip information for the driver
-              driverDoc.ref
-                .collection('Trips')
-                .orderBy('timestamp', 'desc')
-                .limit(1)
-                .get()
-                .then((tripsSnapshot) => {
-                  tripsSnapshot.forEach((tripDoc) => {
-                    const driverLocationData = tripDoc.data();
-                    const { latitude, longitude } = driverLocationData;
-                    const driverId = driverDoc.id;
+                  // Update driver location and info
+                  driverLocations[driverId] = { latitude, longitude };
+                  driverInfos[driverId] = {
+                    firstName: driverData.firstName,
+                    lastName: driverData.lastName,
+                    contactNumber: driverData.contactNumber,
+                    busPlateNumber: driverData.busPlateNumber,
+                    busId: driverData.busId,
+                  };
   
-                    // Update temporary objects with driver location and information
-                    driverLocations[driverId] = { latitude, longitude };
-                    driverInfos[driverId] = {
-                      firstName: driverData.firstName,
-                      lastName: driverData.lastName,
-                      contactNumber: driverData.contactNumber,
-                      busPlateNumber: driverData.busPlateNumber,
-                      busId: driverData.busId,
-                    };
-                  });
-  
-                  // Update state with filtered driver locations and information
-                  setDriverLocation(driverLocations);
-                  setDriverInfo(driverInfos);
-                })
-                .catch((error) => {
-                  console.error('Error fetching driver trips:', error);
+                  // Update state with the latest driver locations and info
+                  setDriverLocation({ ...driverLocations });
+                  setDriverInfo({ ...driverInfos });
                 });
-            }
+              });
           });
-        } catch (error) {
+        }, error => {
           console.error('Error fetching drivers:', error);
-        }
-      };
+        });
   
-      fetchDriverLocations();
+      return () => {
+        // Unsubscribe from the listener when component unmounts
+        unsubscribe();
+      };
     } else {
       // Clear existing driver locations if no route is selected
       setDriverLocation({});
       setDriverInfo({});
     }
   }, [selectedRoute]);
+  
+
   
   
   
