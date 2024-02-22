@@ -59,18 +59,27 @@ const ScheduleScreen = () => {
   return (
     <View style={styles.container}>
       {trips.length === 0 ? (
-        <Text style={{color: '#828282'}}>No trips available</Text>
+         <Text style={{color: 'black'}} style={{color: '#828282'}}>No trips available</Text>
       ) : (
         <FlatList
           data={trips}
           renderItem={({ item, index }) => (
             <View key={index} style={styles.tripContainer}>
-              <Text>Bus Plate Number: {item.busPlateNumber}</Text>
-              <Text>Available Seats: {item.AvailableSeats}</Text>
-              <Text>Available Time: {item.AvailableTime}</Text>
-              <Text>Date of Trip: {item.DateOfTrip}</Text>
-              <Text>Departure Time: {item.DepartureTime}</Text>
-              <Text>Route: {item.Route}</Text>
+               <Text style={{color: 'black', fontWeight: 'bold'}}>Bus Plate Number:</Text> 
+               <Text style={{color: 'black', top: '-10%', left:'35%'}}>{item.busPlateNumber}</Text>
+
+               <Text style={{color: 'black', fontWeight: 'bold',}}>Available Seats:</Text>
+               <Text style={{color: 'black', top: '-10%', left:'35%'}}> {item.AvailableSeats}</Text>
+
+               <Text style={{color: 'black', fontWeight: 'bold'}}>Available Time:</Text>
+                <Text style={{color: 'black', top: '-10%', left:'35%'}}>{item.AvailableTime}</Text>
+
+              <Text style={{color: 'black', fontWeight: 'bold'}}>Date of Trip: </Text>
+              <Text style={{color: 'black', top: '-10%', left:'35%'}}>{item.DateOfTrip}</Text>
+
+              <Text style={{color: 'black', fontWeight: 'bold'}}>Departure Time:</Text> 
+                <Text style={{color: 'black', top: '-10%', left:'35%'}}>{item.DepartureTime}</Text>
+
               {/* Render other trip details as needed */}
             </View>
           )}
@@ -98,7 +107,8 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     padding: 15,
     marginBottom: 25,
-    width: '100%',
+    width: 360,
+    height: 190,
   },
 });
 

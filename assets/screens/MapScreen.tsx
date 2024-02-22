@@ -8,6 +8,7 @@ import MapView, { Marker, Callout } from 'react-native-maps';
 import { useNavigation } from '@react-navigation/native';
 import { firestore3, auth3, firestore2 } from '../screens/firebase';
 import Geolocation from '@react-native-community/geolocation';
+import { black } from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
 
 const { width, height } = Dimensions.get('window');
 const customMarkerImage = require('../images/busstop.png');
@@ -45,7 +46,6 @@ const Mapscreen = () => {
   const [driverInfo, setDriverInfo] = useState<{ [key: string]: DriverInfo }>({});
   const [selectedRoute, setSelectedRoute] = useState('');
   const [open, setOpen] = useState(false);
-  const [pinLocation, setPinLocation] = useState<DriverLocation | null>(null);
   const [userLocation, setUserLocation] = useState<DriverLocation | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
@@ -181,12 +181,6 @@ const Mapscreen = () => {
 }, [selectedRoute]);
 
 
-
-  const handleMapPress = (event: any) => {
-    const { latitude, longitude } = event.nativeEvent.coordinate;
-    setPinLocation({ latitude, longitude });
-  };
-
   const handleShareLocation = () => {
     // Proceed to share location only when the Share button is clicked
     Geolocation.getCurrentPosition(
@@ -245,6 +239,29 @@ const Mapscreen = () => {
     setOpen(false);
   };
 
+
+  const handleZoomIn = () => {
+    if (mapRef.current) {
+      mapRef.current.animateToRegion({
+        latitude: userLocation.latitude,
+        longitude: userLocation.longitude,
+        latitudeDelta: 0.005,
+        longitudeDelta: 0.005,
+      });
+    }
+  };
+
+  const handleZoomOut = () => {
+    if (mapRef.current) {
+      mapRef.current.animateToRegion({
+        latitude: userLocation.latitude,
+        longitude: userLocation.longitude,
+        latitudeDelta: 0.02,
+        longitudeDelta: 0.02,
+      });
+    }
+  };
+
   return (
     <View style={styles.container}>
       {/* Dropdown container */}
@@ -263,7 +280,7 @@ const Mapscreen = () => {
                 onPress={() => handleSelectRoute(route)}
                 style={styles.dropdownItem}
               >
-                <Text>{route}</Text>
+                <Text style={{color: 'black', fontWeight: '900'}}>{route}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -280,7 +297,6 @@ const Mapscreen = () => {
           latitudeDelta: 0.011,
           longitudeDelta: 0.011,
         }}
-        onPress={handleMapPress}
       >
         {/* Display driver locations */}
         {Object.keys(driverLocation).map(driverId => (
@@ -302,12 +318,6 @@ const Mapscreen = () => {
 )}
 
 
-        {/* Display pin location marker if available */}
-        {pinLocation && (
-          <Marker coordinate={pinLocation}>
-            <Image source={require('../images/pin4.png')} style={{ width: 32, height: 32 }} />
-          </Marker>
-        )}
       </MapView>
 
       {/* Button to share location */}
@@ -351,6 +361,7 @@ const Mapscreen = () => {
               >
                 <Text style={{color: 'white', fontWeight: 'bold'}}>Turn Off Share Location</Text>
               </TouchableOpacity>
+  {/* Zoom in button */}
             </View>
           </View>
         </TouchableWithoutFeedback>
@@ -370,23 +381,23 @@ const styles = StyleSheet.create({
     width: '80%',
     height: '10%',
     zIndex: 1,
+    borderRadius: 20,
   },
   routeButton: {
     backgroundColor: '#fff',
     padding: 10,
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 5,
+    borderRadius: 20,
   },
   openDropdown: {
-    borderBottomLeftRadius: 0,
-    borderBottomRightRadius: 0,
+    borderRadius: 20,
   },
   dropdownMenu: {
     backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 5,
+    borderRadius: 10,
     marginTop: 5,
     color: 'black',
   },
@@ -394,10 +405,13 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
+    color: 'black',
+    borderRadius: 20,
   },
   routeButtonText: {
     fontSize: 16,
     color: 'black',
+    fontWeight: '700',
   },
   map: {
     flex: 1,
