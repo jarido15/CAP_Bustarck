@@ -79,21 +79,6 @@ const Mapscreen = () => {
     return () => unsubscribe;
   }, []);
 
-  useEffect(() => {
-    // Fetch the user's current location using Geolocation
-    Geolocation.getCurrentPosition(
-      position => {
-        const { latitude, longitude } = position.coords;
-        // Update userLocation with the fetched location
-        setUserLocation({ latitude, longitude });
-        console.log('User Location:', { latitude, longitude });
-      },
-      error => {
-        console.error('Error getting user location:', error);
-      },
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-    );
-  }, []);
 
   const saveUserLocationToFirestore = (latitude, longitude) => {
     firestore3.collection('UserLocations').add({
@@ -327,8 +312,8 @@ const Mapscreen = () => {
             {...panResponder.panHandlers}
           >
             <View style={styles.modalContent}>
-              <Text style={{fontWeight: 'bold', fontSize: 25, top: '-30%', color: 'black',}}>Note!</Text>
-              <Image source={require('../images/Line.png')} style={{width: '100%', height: '0.5%', top: '-25%',}}/>
+              <Text style={{fontWeight: 'bold', fontSize: 25, top: '-30%', color: 'black'}}>Note!</Text>
+              <Image source={require('../images/Line.png')} style={{width: '100%', height: '0.5%', top: '-25%'}}/>
               <Text style={{fontWeight: '900', fontSize: 20, marginBottom: -25, marginTop: -25, color: 'black', justifyContent: 'space-between'}}> Please turn off your share location once you entered bus, Thank you!</Text>
               {/* Button to delete UserLocations data */}
               <TouchableOpacity
