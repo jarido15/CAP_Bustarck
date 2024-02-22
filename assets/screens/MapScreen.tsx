@@ -114,68 +114,73 @@ const Mapscreen = () => {
   useEffect(() => {
     // Only fetch driver locations if a route is selected
     if (selectedRoute) {
-      // Clear existing driver locations and information
-      setDriverLocation({});
-      setDriverInfo({});
-  
-      const unsubscribe = firestore2.collection('Drivers')
-        .where('Route', '==', selectedRoute)
-        .onSnapshot(snapshot => {
-          const driverLocations = {}; // Temporary object to hold driver locations
-          const driverInfos = {}; // Temporary object to hold driver information
-  
-          snapshot.forEach(driverDoc => {
-            const driverData = driverDoc.data();
-            const driverId = driverDoc.id;
-  
-            // Retrieve the latest trip information for the driver
-            driverDoc.ref.collection('Trips')
-              .orderBy('timestamp', 'desc')
-              .limit(1)
-              .onSnapshot(tripsSnapshot => {
-                tripsSnapshot.forEach(tripDoc => {
-                  const driverLocationData = tripDoc.data();
-                  const { latitude, longitude } = driverLocationData;
-  
-                  // Update driver location and info
-                  driverLocations[driverId] = { latitude, longitude };
-                  driverInfos[driverId] = {
-                    firstName: driverData.firstName,
-                    lastName: driverData.lastName,
-                    contactNumber: driverData.contactNumber,
-                    busPlateNumber: driverData.busPlateNumber,
-                    busId: driverData.busId,
-                  };
-  
-                  // Update state with the latest driver locations and info
-                  setDriverLocation({ ...driverLocations });
-                  setDriverInfo({ ...driverInfos });
+        // Clear existing driver locations and information
+        setDriverLocation({});
+        setDriverInfo({});
+
+
+        const query = firestore2.collection('Drivers').where('Route', '==', selectedRoute);
+
+            query.get().then(snapshot => {
+              if (!snapshot.empty) {
+                const unsubscribe = query.onSnapshot(snapshot => {
+                const driverLocations = {}; // Temporary object to hold driver locations
+                const driverInfos = {}; // Temporary object to hold driver information
+
+                snapshot.forEach(driverDoc => {
+                    const driverData = driverDoc.data();
+                    const driverId = driverDoc.id;
+
+                    console.log('Driver in selected route:', driverId);
+
+                    // Retrieve the latest trip information for the driver
+                    driverDoc.ref.collection('Trips')
+                        .orderBy('timestamp', 'desc')
+                        .limit(1)
+                        .onSnapshot(tripsSnapshot => {
+                            tripsSnapshot.forEach(tripDoc => {
+                                const driverLocationData = tripDoc.data();
+                                const { latitude, longitude } = driverLocationData;
+
+                                // Check if the driver's route matches the selected route
+                                if (driverData.Route === selectedRoute) {
+                                    // Update driver location and info only if the route matches
+                                    driverLocations[driverId] = { latitude, longitude };
+                                    driverInfos[driverId] = {
+                                        firstName: driverData.firstName,
+                                        lastName: driverData.lastName,
+                                        contactNumber: driverData.contactNumber,
+                                        busPlateNumber: driverData.busPlateNumber,
+                                        busId: driverData.busId,
+                                    };
+                                }
+                            });
+
+                            // Update state with the latest driver locations and info
+                            setDriverLocation({ ...driverLocations });
+                            setDriverInfo({ ...driverInfos });
+                        });
                 });
               });
-          });
-        }, error => {
-          console.error('Error fetching drivers:', error);
-        });
-  
-      return () => {
-        // Unsubscribe from the listener when component unmounts
-        unsubscribe();
-      };
-    } else {
-      // Clear existing driver locations if no route is selected
-      setDriverLocation({});
-      setDriverInfo({});
-    }
-  }, [selectedRoute]);
-  
+              return () => {
+                // Unsubscribe from the listener when component unmounts
+                unsubscribe();
+            };
+              }
 
-  
-  
-  
-  
-   // Add selectedRoute as a dependency to trigger the effect when the route changes
-   // Add selectedRoute as a dependency to trigger the effect when the route changes
-  
+            }, error => {
+                console.error('Error fetching drivers:', error);
+            });
+
+
+    } else {
+        // Clear existing driver locations if no route is selected
+        setDriverLocation({});
+        setDriverInfo({});
+    }
+}, [selectedRoute]);
+
+
 
   const handleMapPress = (event: any) => {
     const { latitude, longitude } = event.nativeEvent.coordinate;
@@ -235,7 +240,7 @@ const Mapscreen = () => {
     })
   ).current;
   const handleSelectRoute = (Route) => {
-    console.log('Firest Selected Route:', Route); // Add this line to log the selected route
+    console.log('First Selected Route:', Route); // Add this line to log the selected route
     setSelectedRoute(Route);
     setOpen(false);
   };

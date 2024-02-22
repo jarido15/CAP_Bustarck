@@ -23,17 +23,13 @@ function MapStack() {
       <Tab.Navigator
         screenOptions={{
           tabBarStyle: {
-            borderBottomLeftRadius: 0,
-            borderBottomRightRadius: 0,
-            borderTopLeftRadius: 20,
-            borderTopRightRadius: 20,
             position: 'absolute',
             bottom: 0,
             left: 0,
             right: 0,
             elevation: 0,
             backgroundColor: '#42047e',
-            height: 50,
+            height: 60,
           },
         }}>
         <Tab.Screen
