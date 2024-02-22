@@ -8,7 +8,7 @@ import MapView, { Marker, Callout } from 'react-native-maps';
 import { useNavigation } from '@react-navigation/native';
 import { firestore3, auth3, firestore2 } from '../screens/firebase';
 import Geolocation from '@react-native-community/geolocation';
-import { black } from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
+import { ToastAndroid } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 const customMarkerImage = require('../images/busstop.png');
@@ -233,10 +233,12 @@ const Mapscreen = () => {
       },
     })
   ).current;
+
   const handleSelectRoute = (Route) => {
-    console.log('First Selected Route:', Route); // Add this line to log the selected route
     setSelectedRoute(Route);
     setOpen(false);
+    // Show native Android toast message
+    ToastAndroid.show(`Selected Route: ${Route}`, ToastAndroid.SHORT);
   };
 
   return (

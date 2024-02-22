@@ -41,6 +41,7 @@
     "react-native-screens": "^3.27.0",
     "react-native-simple-bottom-sheet": "^1.0.4",
     "react-native-splash-screen": "^3.3.0",
+    "react-native-toast-message": "^2.2.0",
     "react-native-vector-icons": "^10.0.3",
     "socket.io-client": "^4.7.4"
   },
