@@ -239,29 +239,6 @@ const Mapscreen = () => {
     setOpen(false);
   };
 
-
-  const handleZoomIn = () => {
-    if (mapRef.current) {
-      mapRef.current.animateToRegion({
-        latitude: userLocation.latitude,
-        longitude: userLocation.longitude,
-        latitudeDelta: 0.005,
-        longitudeDelta: 0.005,
-      });
-    }
-  };
-
-  const handleZoomOut = () => {
-    if (mapRef.current) {
-      mapRef.current.animateToRegion({
-        latitude: userLocation.latitude,
-        longitude: userLocation.longitude,
-        latitudeDelta: 0.02,
-        longitudeDelta: 0.02,
-      });
-    }
-  };
-
   return (
     <View style={styles.container}>
       {/* Dropdown container */}
