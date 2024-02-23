@@ -7,12 +7,11 @@ import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import StartingScreen from './assets/screens/WelcomeScreen';
 import SplashScreen from 'react-native-splash-screen';
-import DriverScreen from './assets/screens/DriverScreen';
 import MapScreen from './assets/screens/MapScreen';
 import GuideScreen from './assets/screens/GuideScreen';
 import ScheduleScreen from './assets/screens/ScheduleScreen'; // Import the ScheduleScreen component
 import { View, Image, Text, TouchableOpacity, StatusBar } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome'; // Import FontAwesome or any other available icon set
+
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -187,7 +186,6 @@ function App() {
         screenOptions={{ headerShown: false }}
         initialRouteName="StartingScreen">
         <Stack.Screen name="StartingScreen" component={StartingScreen} />
-        <Stack.Screen name="DriverScreen" component={DriverScreen} />
         <Stack.Screen
           name="MapScreen"
           component={MapStack}

@@ -1,4 +1,6 @@
 /* eslint-disable prettier/prettier */
+/* eslint-disable comma-dangle */
+/* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import React, { useState } from 'react';
@@ -7,7 +9,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const GuideScreen = ({}) => {
   const [modalVisible, setModalVisible] = useState(false);
-
+  const [busTripModalVisible, setBusTripModalVisible] = useState(false); // New state for Bus Trip Info modal
+  const [selectRouteModalVisible, setselectRouteModalVisible] = useState(false); // New state for Bus Trip Info modal
+  const [sharelocationModalVisible, setsharelocationModalVisible] = useState(false); 
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -23,21 +27,32 @@ const GuideScreen = ({}) => {
         </View>
 
         <View style={styles.container}>
-          <Image source={require('../images/bus-station.png')} style={styles.bus}/>
-          <Text style={{color: '#42047e', fontSize: 25, fontWeight: '900', top: '80%', left: '30%'}}> Bus Trip Info</Text>
-          {/* Add content for container 2 */}
+        <Image source={require('../images/bus-station.png')} style={styles.bus}/>
+        <TouchableOpacity onPress={() => setBusTripModalVisible(true)}>
+          <View style={styles.containerWithShadow2}>
+            <Text style={{color: '#42047e', fontSize: 20, fontWeight: '900', textAlign: 'center'}}> Bus Trips</Text>
+          </View>
+        </TouchableOpacity>
         </View>
 
         {/* Add more containers here */}
         <View style={styles.container}>
           <Image source={require('../images/route.png')} style={styles.route}/>
-          <Text style={{color: '#42047e', fontSize: 25, fontWeight: '900', top: '80%', left: '30%'}}>Select Route</Text>
+          <TouchableOpacity onPress={() => setselectRouteModalVisible(true)}>
+          <View style={styles.containerWithShadow3}>
+          <Text style={{color: '#42047e', fontSize: 20, fontWeight: '900', top: '-2%', left: '-1%'}}>Select Route</Text>
+          </View>
+        </TouchableOpacity>
           {/* Add content for container 2 */}
         </View>
 
         <View style={styles.container}>
           <Image source={require('../../assets/images/share-location.png')} style={styles.share}/>
-          <Text style={{color: '#42047e', fontSize: 25, fontWeight: '900', top: '80%', left: '25%'}}>Share Location</Text>
+          <TouchableOpacity onPress={() => setselectRouteModalVisible(true)}>
+          <View style={styles.containerWithShadow4}>
+          <Text style={{color: '#42047e', fontSize: 20, fontWeight: '900', top: '-2%', left: '-1%'}}>Share Location</Text>
+          </View>
+        </TouchableOpacity>
           {/* Add content for container 3 */}
         </View>
         {/* Add extra content to extend the scroll */}
@@ -53,11 +68,72 @@ const GuideScreen = ({}) => {
         >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
-              <Text style={styles.modalText}>Allow Location</Text>
-              <Button
-                title="Got It"
-                onPress={() => setModalVisible(!modalVisible)}
-              />
+              <Text style={styles.modalText}> • Allow Location</Text>
+              <TouchableOpacity   onPress={() => setModalVisible(!modalVisible)}>
+                <View style={styles.modalbutton}>
+                <Text style={styles.gotit}>Got It</Text>
+                </View>
+                </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={busTripModalVisible}
+          onRequestClose={() => {
+            setBusTripModalVisible(!busTripModalVisible);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}> • Bus Trips</Text>
+              <TouchableOpacity onPress={() => setBusTripModalVisible(!busTripModalVisible)}>
+                <View style={styles.modalbutton}>
+                  <Text style={styles.gotit}>Got It</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={selectRouteModalVisible}
+          onRequestClose={() => {
+            setselectRouteModalVisible(!selectRouteModalVisible);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}> • Select Route</Text>
+              <TouchableOpacity onPress={() => setselectRouteModalVisible(!selectRouteModalVisible)}>
+                <View style={styles.modalbutton}>
+                  <Text style={styles.gotit}>Got It</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={sharelocationModalVisible}
+          onRequestClose={() => {
+            setsharelocationModalVisible(!sharelocationModalVisible);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}> • Share Location</Text>
+              <TouchableOpacity onPress={() => setsharelocationModalVisible(!sharelocationModalVisible)}>
+                <View style={styles.modalbutton}>
+                  <Text style={styles.gotit}>Got It</Text>
+                </View>
+              </TouchableOpacity>
             </View>
           </View>
         </Modal>
@@ -69,7 +145,69 @@ const GuideScreen = ({}) => {
 export default GuideScreen;
 
 const styles = StyleSheet.create({
+  gotit:{
+    left: '37%',
+    top: '10%',
+    fontSize: 20,
+    fontWeight: '900',
+    color:'#Fff'
+  },
+  modalbutton:{
+    backgroundColor: '#42047e',
+    width: 180,
+    height: '25%',
+    borderRadius: 20,
+    top: '-10%'
+  },
   containerWithShadow1: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 10,
+    top: '590%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#42047e',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  containerWithShadow2: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 10,
+    top: '590%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#42047e',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  containerWithShadow3: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 10,
+    top: '590%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#42047e',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  containerWithShadow4: {
     backgroundColor: 'white',
     borderRadius: 20,
     padding: 10,
@@ -167,11 +305,11 @@ share: {
     width: '80%',
   },
   modalText: {
-    marginBottom: '200%',
-    textAlign: 'center',
-    color: '#42047e',
+    marginBottom: '210%',
+    left: '-35%',
+    color: '#646464',
     fontWeight: '900',
-    fontSize: 25,
+    fontSize: 15,
   },
   buttonStyle: {
     backgroundColor: 'blue', // Change the color to whatever you like

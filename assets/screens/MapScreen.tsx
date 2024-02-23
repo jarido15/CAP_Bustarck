@@ -32,7 +32,7 @@ const CustomMarker = ({ coordinate, title, description }) => {
       <Image source={customMarkerImage} style={{ width: 62, height: 62 }} />
       <Callout>
         <View style={styles.calloutContainer}>
-          <Text style={{ color: 'black', fontSize: 11 }}>{description}</Text>
+          <Text style={{ color: 'black', fontSize: 11, fontWeight: '900', left: '10%', marginBottom: '10%' }}>{description}</Text>
         </View>
       </Callout>
     </Marker>
@@ -269,8 +269,10 @@ const Mapscreen = () => {
             coordinate={driverLocation[driverId] ? driverLocation[driverId] : { latitude: 0, longitude: 0 }}
             title="Driver Location"
             description={`Driver: ${driverInfo[driverId]?.firstName} ${driverInfo[driverId]?.lastName} 
-            Contact: ${driverInfo[driverId]?.contactNumber}
-            Plate Number: ${driverInfo[driverId]?.busPlateNumber}`}
+
+Contact: ${driverInfo[driverId]?.contactNumber}
+
+Plate Number: ${driverInfo[driverId]?.busPlateNumber}`}
           />
         ))}
 
@@ -351,7 +353,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 10,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#42047e',
     borderRadius: 20,
   },
   openDropdown: {
