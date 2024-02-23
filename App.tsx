@@ -11,7 +11,7 @@ import DriverScreen from './assets/screens/DriverScreen';
 import MapScreen from './assets/screens/MapScreen';
 import GuideScreen from './assets/screens/GuideScreen';
 import ScheduleScreen from './assets/screens/ScheduleScreen'; // Import the ScheduleScreen component
-import { View, Image, Text, TouchableOpacity } from 'react-native';
+import { View, Image, Text, TouchableOpacity, StatusBar } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import FontAwesome or any other available icon set
 
 const Stack = createNativeStackNavigator();
@@ -20,6 +20,8 @@ const Tab = createBottomTabNavigator();
 function MapStack() {
   return (
     <View style={{ flex: 1 }}>
+        <StatusBar backgroundColor="#42047e" barStyle="light-content" />
+        <StatusBar backgroundColor="#42047e" barStyle="dark-content" />
       <Tab.Navigator
         screenOptions={{
           tabBarStyle: {
@@ -28,7 +30,9 @@ function MapStack() {
             left: 0,
             right: 0,
             elevation: 0,
-            backgroundColor: '#42047e',
+            borderTopLeftRadius: 35,
+            borderTopRightRadius: 35,
+            backgroundColor: '#fff',
             height: 60,
           },
         }}>
@@ -52,11 +56,11 @@ function MapStack() {
                     top: -0.1,
                     width: 30,
                     height: 30,
-                    tintColor: focused ? '#fff' : '#748c94',
+                    tintColor: focused ? '#42047e' : '#748c94',
                   }}
                 />
                 <Text
-                  style={{ color: focused ? '#fff' : '#748c94', fontSize: 10 }}>
+                  style={{ color: focused ? '#42047e' : '#748c94', fontSize: 10,  justifyContent: 'center' }}>
                   Map
                 </Text>
               </View>
@@ -68,6 +72,8 @@ function MapStack() {
   component={ScheduleScreen}
   options={({ navigation }) => ({
     tabBarLabel: '',
+    headerShown: true,
+    headerTitleAlign: 'center',
     tabBarIcon: ({ focused }) => (
       <View
         style={{
@@ -82,11 +88,11 @@ function MapStack() {
             top: -0.1,
             width: 34,
             height: 34,
-            tintColor: focused ? '#fff' : '#748c94',
+            tintColor: focused ? '#42047e' : '#748c94',
           }}
         />
         <Text
-          style={{ color: focused ? '#fff' : '#748c94', fontSize: 10 }}>
+          style={{ color: focused ? '#42047e' : '#748c94', fontSize: 10, justifyContent: 'center' }}>
           Bus Schedule
         </Text>
       </View>
@@ -113,10 +119,12 @@ function MapStack() {
   })}
 />
 <Tab.Screen
-  name="Guide"
+  name=" User Guide"
   component={GuideScreen}
   options={({ navigation }) => ({
     tabBarLabel: '',
+    headerShown: true,
+    headerTitleAlign: 'center',
     tabBarIcon: ({ focused }) => (
       <View
         style={{
@@ -131,11 +139,11 @@ function MapStack() {
             top: -4,
             width: 25,
             height: 25,
-            tintColor: focused ? '#fff' : '#748c94',
+            tintColor: focused ? '#42047e' : '#748c94',
           }}
         />
         <Text
-          style={{ color: focused ? '#fff' : '#748c94', fontSize: 10 }}>
+          style={{ color: focused ? '#42047e' : '#748c94', fontSize: 10,  justifyContent: 'center' }}>
           User Guide
         </Text>
       </View>
@@ -174,6 +182,7 @@ function App() {
 
   return (
     <NavigationContainer>
+          <StatusBar backgroundColor="#42047e" barStyle="light-content" />
       <Stack.Navigator
         screenOptions={{ headerShown: false }}
         initialRouteName="StartingScreen">
@@ -184,6 +193,7 @@ function App() {
           component={MapStack}
           options={{
             headerShown: false,
+
           }}
         />
       </Stack.Navigator>

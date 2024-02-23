@@ -412,7 +412,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    bottom: '-28%',
+    bottom: '-27%',
   },
   modalContent: {
     backgroundColor: 'white',

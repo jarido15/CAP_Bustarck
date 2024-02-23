@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
@@ -59,25 +60,25 @@ const ScheduleScreen = () => {
   return (
     <View style={styles.container}>
       {trips.length === 0 ? (
-         <Text style={{color: 'black'}} style={{color: '#828282'}}>No trips available</Text>
+         <Text  style={{color: '#828282'}}>No trips available</Text>
       ) : (
         <FlatList
           data={trips}
           renderItem={({ item, index }) => (
             <View key={index} style={styles.tripContainer}>
-               <Text style={{color: 'black', fontWeight: 'bold'}}>Bus Plate Number:</Text> 
+               <Text style={{color: '#42047e', fontWeight: 'bold'}}>Bus Plate Number:</Text> 
                <Text style={{color: 'black', top: '-10%', left:'35%'}}>{item.busPlateNumber}</Text>
 
-               <Text style={{color: 'black', fontWeight: 'bold',}}>Available Seats:</Text>
+               <Text style={{color: '#42047e', fontWeight: 'bold'}}>Available Seats:</Text>
                <Text style={{color: 'black', top: '-10%', left:'35%'}}> {item.AvailableSeats}</Text>
 
-               <Text style={{color: 'black', fontWeight: 'bold'}}>Available Time:</Text>
+               <Text style={{color: '#42047e', fontWeight: 'bold'}}>Available Time:</Text>
                 <Text style={{color: 'black', top: '-10%', left:'35%'}}>{item.AvailableTime}</Text>
 
-              <Text style={{color: 'black', fontWeight: 'bold'}}>Date of Trip: </Text>
+              <Text style={{color: '#42047e', fontWeight: 'bold'}}>Date of Trip: </Text>
               <Text style={{color: 'black', top: '-10%', left:'35%'}}>{item.DateOfTrip}</Text>
 
-              <Text style={{color: 'black', fontWeight: 'bold'}}>Departure Time:</Text> 
+              <Text style={{color: '#42047e', fontWeight: 'bold'}}>Departure Time:</Text> 
                 <Text style={{color: 'black', top: '-10%', left:'35%'}}>{item.DepartureTime}</Text>
 
               {/* Render other trip details as needed */}
