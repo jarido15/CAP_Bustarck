@@ -302,6 +302,7 @@ Plate Number: ${driverInfo[driverId]?.busPlateNumber}`}
         onPress={handlePinLocation} // Allow users to pin by pressing the map
         style={styles.pinLocationButton}
       >
+         <Image style={{ width: '75%', height: '130%', resizeMode: 'contain', top: '-15%', left: '-30%', }} source={require('../images/pinloc.png')} />
         <Text style={styles.pinLocationButtonText}>Pin Location</Text>
       </TouchableOpacity>
 
@@ -311,7 +312,8 @@ Plate Number: ${driverInfo[driverId]?.busPlateNumber}`}
         style={styles.shareLocationButton}
       >
         <View style={styles.shareLocationBox}>
-       <Text style={{fontSize: 12, color: '#42047e', left: '12%', fontWeight: '900', top: '20%'}}> Share Location</Text>
+          <Image style={{ width: '25%', height: '40%', resizeMode: 'contain', top: '30%' }} source={require('../images/shareloc.png')} />
+       <Text style={{fontSize: 12, color: '#42047e', left: '21%', fontWeight: '900', top: '-15%'}}> Share Location</Text>
         </View>
       </TouchableOpacity>
 
@@ -362,7 +364,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     // borderColor: '#42047e',
     // borderWidth: 1,
-    width: '25%',
+    width: '28%',
     height: '4%',
     padding: 10,
     borderRadius: 25,
@@ -378,7 +380,8 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     textAlign: 'center',
     fontSize: 12,
-    top: '-15%',
+    top: '-145%',
+    left: '5%',
   },
   container: {
     flex: 1,
@@ -445,10 +448,10 @@ const styles = StyleSheet.create({
   shareLocationBox: {
     backgroundColor: 'white',
     borderRadius: 25,
-    width: '130%',
-    height: '215%',
+    width: '145%',
+    height: '235%',
     left: '-245%',
-    top: '648%',
+    top: '630%',
     elevation: 5, // Add elevation for shadow effect
     shadowColor: '#000', // Shadow color
     shadowOffset: { width: 0, height: 2 }, // Shadow offset
