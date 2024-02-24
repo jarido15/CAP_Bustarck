@@ -27,7 +27,7 @@ const GuideScreen = ({}) => {
         </View>
 
         <View style={styles.container}>
-        <Image source={require('../images/bus-station.png')} style={styles.bus}/>
+        <Image source={require('../images/bus-stop.png')} style={styles.bus}/>
         <TouchableOpacity onPress={() => setBusTripModalVisible(true)}>
           <View style={styles.containerWithShadow2}>
             <Text style={{color: '#42047e', fontSize: 20, fontWeight: '900', textAlign: 'center'}}> Bus Trips</Text>
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 20,
     padding: 10,
-    top: '590%',
+    top: '250%',
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#42047e',
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 20,
     padding: 10,
-    top: '590%',
+    top: '250%',
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#42047e',
@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 20,
     padding: 10,
-    top: '590%',
+    top: '250%',
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#42047e',
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 20,
     padding: 10,
-    top: '590%',
+    top: '250%',
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#42047e',
@@ -229,31 +229,31 @@ const styles = StyleSheet.create({
     fontWeight: '900',
   },
   bus:{
-    width: '70%',
-    height: '65%',
-    left: '22%',
+    width: '35%',
+    height: '75%',
+    left: '40%',
     top: '5%',
     position: 'absolute',
   },
 share: {
-  width: '70%',
-    height: '65%',
-    left: '22%',
+  width: '35%',
+    height: '75%',
+    left: '40%',
     top: '5%',
     position: 'absolute',
 },
   route: {
-    width: '71%',
-    height: '69%',
-    left: '22%',
+    width: '35%',
+    height: '79%',
+    left: '40%',
     top: '5%',
     position: 'absolute',
 
   },
   gps: {
-    width: '70%',
-    height: '69%',
-    left: '22%',
+    width: '35%',
+    height: '79%',
+    left: '40%',
     top: '5%',
     position: 'absolute',
 
@@ -264,11 +264,11 @@ share: {
   },
   scrollViewContent: {
     flexGrow: 1,
-    paddingBottom: '190%', // Adjust paddingBottom to accommodate the extra content at the end
+    paddingBottom: '1%', // Adjust paddingBottom to accommodate the extra content at the end
   },
   container: {
     backgroundColor: '#fff', // Set background color for container
-    margin: 20, // Add margin for spacing
+    margin: 15, // Add margin for spacing
     borderRadius: 10, // Add border radius for rounded corners
     shadowColor: '#000', // Set shadow color
     shadowOffset: {
@@ -279,7 +279,7 @@ share: {
     shadowRadius: 3.84, // Set shadow radius
     elevation: 5, // Set elevation for Android
     padding: 20, // Add padding for inner content
-    height: '40%', // Set initial height for container
+    height: '20%', // Set initial height for container
   },
   centeredView: {
     flex: 1,

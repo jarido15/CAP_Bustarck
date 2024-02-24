@@ -49,6 +49,7 @@ const Mapscreen = () => {
   const [userLocation, setUserLocation] = useState<DriverLocation | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
+  const [pinnedLocation, setPinnedLocation] = useState<DriverLocation | null>(null); 
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
@@ -226,6 +227,11 @@ const Mapscreen = () => {
     ToastAndroid.show(`Selected Route: ${Route}`, ToastAndroid.SHORT);
   };
 
+  const handlePinLocation = (event) => {
+    const { coordinate } = event.nativeEvent;
+    setPinnedLocation(coordinate); // Set the pinned location coordinates
+  };
+
   return (
     <View style={styles.container}>
       {/* Dropdown container */}
@@ -261,6 +267,7 @@ const Mapscreen = () => {
           latitudeDelta: 0.011,
           longitudeDelta: 0.011,
         }}
+        onPress={handlePinLocation} // Add onPress event to handle pinning
       >
         {/* Display driver locations */}
         {Object.keys(driverLocation).map(driverId => (
@@ -283,8 +290,20 @@ Plate Number: ${driverInfo[driverId]?.busPlateNumber}`}
   </Marker>
 )}
 
+{pinnedLocation && (
+          <Marker coordinate={pinnedLocation}>
+            <Image source={require('../images/pin4.png')} style={{ width: 30, height: 30 }} />
+          </Marker>
+        )}
 
       </MapView>
+
+      <TouchableOpacity
+        onPress={handlePinLocation} // Allow users to pin by pressing the map
+        style={styles.pinLocationButton}
+      >
+        <Text style={styles.pinLocationButtonText}>Pin Location</Text>
+      </TouchableOpacity>
 
       {/* Button to share location */}
       <TouchableOpacity
@@ -292,7 +311,7 @@ Plate Number: ${driverInfo[driverId]?.busPlateNumber}`}
         style={styles.shareLocationButton}
       >
         <View style={styles.shareLocationBox}>
-          <Image source={require('../images/share.png')} style={styles.shareLocationImage} />
+       <Text style={{fontSize: 12, color: '#42047e', left: '12%', fontWeight: '900', top: '20%'}}> Share Location</Text>
         </View>
       </TouchableOpacity>
 
@@ -327,7 +346,6 @@ Plate Number: ${driverInfo[driverId]?.busPlateNumber}`}
               >
                 <Text style={{color: 'white', fontWeight: 'bold'}}>Turn Off Share Location</Text>
               </TouchableOpacity>
-  {/* Zoom in button */}
             </View>
           </View>
         </TouchableWithoutFeedback>
@@ -337,6 +355,31 @@ Plate Number: ${driverInfo[driverId]?.busPlateNumber}`}
 };
 
 const styles = StyleSheet.create({
+  pinLocationButton: {
+    position: 'absolute',
+    bottom: '8%',
+    left: '20%',
+    backgroundColor: 'white',
+    // borderColor: '#42047e',
+    // borderWidth: 1,
+    width: '25%',
+    height: '4%',
+    padding: 10,
+    borderRadius: 25,
+    zIndex: 1,
+    elevation: 5, // Add elevation for shadow effect
+    shadowColor: '#000', // Shadow color
+    shadowOffset: { width: 0, height: 2 }, // Shadow offset
+    shadowOpacity: 0.25, // Shadow opacity
+    shadowRadius: 3.84, // Shadow radius
+  },  
+  pinLocationButtonText: {
+    color: '#42047e',
+    fontWeight: '900',
+    textAlign: 'center',
+    fontSize: 12,
+    top: '-15%',
+  },
   container: {
     flex: 1,
   },
@@ -394,17 +437,23 @@ const styles = StyleSheet.create({
   },
   shareLocationButton: {
     position: 'absolute',
-    bottom: '20%',
-    right: '5%',
+    bottom: '22%',
+    right: '-23%',
     alignSelf: 'center',
     borderRadius: 5,
   },
   shareLocationBox: {
-    borderWidth: 1,
-    borderColor: '#ffffff',
     backgroundColor: 'white',
-    borderRadius: 5,
-    padding: 5,
+    borderRadius: 25,
+    width: '130%',
+    height: '215%',
+    left: '-245%',
+    top: '648%',
+    elevation: 5, // Add elevation for shadow effect
+    shadowColor: '#000', // Shadow color
+    shadowOffset: { width: 0, height: 2 }, // Shadow offset
+    shadowOpacity: 0.25, // Shadow opacity
+    shadowRadius: 3.84, // Shadow radius
   },
   shareLocationImage: {
     width: 30,
