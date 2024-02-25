@@ -100,16 +100,12 @@ const Mapscreen = () => {
   useEffect(() => {
     // Only fetch driver locations if a route is selected
     if (selectedRoute) {
-        // Clear existing driver locations and information
-        setDriverLocation({});
-        setDriverInfo({});
-
-
         const query = firestore2.collection('Drivers').where('Route', '==', selectedRoute);
 
-            query.get().then(snapshot => {
-              if (!snapshot.empty) {
-                const unsubscribe = query.onSnapshot(snapshot => {
+        const unsubscribeCallbacks: (() => void)[] = [];
+
+        query.get().then(snapshot => {
+            if (!snapshot.empty) {
                 const driverLocations = {}; // Temporary object to hold driver locations
                 const driverInfos = {}; // Temporary object to hold driver information
 
@@ -119,20 +115,22 @@ const Mapscreen = () => {
 
                     console.log('Driver in selected route:', driverId);
 
-                    // Retrieve the latest trip information for the driver
-                    driverDoc.ref.collection('Trips')
+                    const unsubscribe = driverDoc.ref.collection('Trips')
                         .orderBy('timestamp', 'desc')
                         .limit(1)
                         .onSnapshot(tripsSnapshot => {
+                            // Clear previous driver location and info
+                            const driverLocation = { ...driverLocations };
+                            const driverInfo = { ...driverInfos };
+
                             tripsSnapshot.forEach(tripDoc => {
                                 const driverLocationData = tripDoc.data();
                                 const { latitude, longitude } = driverLocationData;
 
-                                // Check if the driver's route matches the selected route
+                                // Update driver location and info only if the route matches
                                 if (driverData.Route === selectedRoute) {
-                                    // Update driver location and info only if the route matches
-                                    driverLocations[driverId] = { latitude, longitude };
-                                    driverInfos[driverId] = {
+                                    driverLocation[driverId] = { latitude, longitude };
+                                    driverInfo[driverId] = {
                                         firstName: driverData.firstName,
                                         lastName: driverData.lastName,
                                         contactNumber: driverData.contactNumber,
@@ -143,26 +141,27 @@ const Mapscreen = () => {
                             });
 
                             // Update state with the latest driver locations and info
-                            setDriverLocation({ ...driverLocations });
-                            setDriverInfo({ ...driverInfos });
+                            setDriverLocation(driverLocation);
+                            setDriverInfo(driverInfo);
                         });
+
+                    unsubscribeCallbacks.push(unsubscribe);
                 });
-              });
-              return () => {
-                // Unsubscribe from the listener when component unmounts
-                unsubscribe();
-            };
-              }
+            }
+        }).catch(error => {
+            console.error('Error fetching drivers:', error);
+        });
 
-            }, error => {
-                console.error('Error fetching drivers:', error);
-            });
+        // Unsubscribe from previous listeners before setting up new ones
+        return () => {
+            if (unsubscribeCallbacks.length > 0) {
+                unsubscribeCallbacks.forEach(unsubscribe => unsubscribe());
+            }
 
-
-    } else {
-        // Clear existing driver locations if no route is selected
-        setDriverLocation({});
-        setDriverInfo({});
+            // Clear existing driver locations and information if no route is selected
+            setDriverLocation({});
+            setDriverInfo({});
+        };
     }
 }, [selectedRoute]);
 
