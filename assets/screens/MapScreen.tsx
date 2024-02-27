@@ -100,7 +100,7 @@ const Mapscreen = () => {
   useEffect(() => {
     // Only fetch driver locations if a route is selected
     if (selectedRoute) {
-        const query = firestore2.collection('Drivers').where('Route', '==', selectedRoute).where('archive', '==', false);
+        const query = firestore2.collection('Drivers').where('Route', '==', selectedRoute).where('archive', '==', false).where('Status', '==', 'active');
 
         const unsubscribeCallbacks: (() => void)[] = [];
 
