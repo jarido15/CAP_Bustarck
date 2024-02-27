@@ -8,24 +8,25 @@ const ScheduleScreen = () => {
   const [trips, setTrips] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
+
   const fetchTripInfo = async () => {
     try {
-      const driversSnapshot = await firestore2.collection('Drivers').get();
+      const driversSnapshot = await firestore2.collection('Drivers').where('archive', '==', false).get();
       const tripsData = [];
-
+  
       for (const driverDoc of driversSnapshot.docs) {
         const tripsCollectionRef = driverDoc.ref.collection('Trip_Info');
         const querySnapshot = await tripsCollectionRef.orderBy('createdAt', 'desc').limit(1).get();
-
+  
         querySnapshot.forEach(async (doc) => {
           console.log('Driver ID:', driverDoc.id); // Log driver document ID
           console.log('Fetched document:', doc.id, doc.data()); // Log fetched document
           const { AvailableSeats, AvailableTime, DateOfTrip, DepartureTime, Route } = doc.data();
-
+  
           // Get busPlateNumber from the Driver collection
           const driverData = await driverDoc.ref.get();
           const busPlateNumber = driverData.data().busPlateNumber;
-
+  
           tripsData.push({
             driverId: driverDoc.id, // Include driver ID in the trips data
             tripId: doc.id,
@@ -38,7 +39,7 @@ const ScheduleScreen = () => {
           });
         });
       }
-
+  
       console.log('Trips data:', tripsData); // Log fetched data
       setTrips(tripsData);
     } catch (error) {
@@ -47,11 +48,7 @@ const ScheduleScreen = () => {
       setIsRefreshing(false);
     }
   };
-
-  useEffect(() => {
-    fetchTripInfo();
-  }, []);
-
+  
   const handleRefresh = () => {
     setIsRefreshing(true);
     fetchTripInfo();
