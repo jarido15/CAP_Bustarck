@@ -32,7 +32,7 @@ const CustomMarker = ({ coordinate, title, description }) => {
       <Image source={customMarkerImage} style={{ width: 62, height: 62 }} />
       <Callout>
         <View style={styles.calloutContainer}>
-          <Text style={{ color: 'black', fontSize: 11, fontWeight: '900', left: '10%', marginBottom: '10%' }}>{description}</Text>
+          <Text style={{ color: 'black', fontSize: 11, fontWeight: '900', left: '5%', marginBottom: '-15%' }}>{description}</Text>
         </View>
       </Callout>
     </Marker>
@@ -275,9 +275,11 @@ const Mapscreen = () => {
             key={driverId}
             coordinate={driverLocation[driverId] ? driverLocation[driverId] : { latitude: 0, longitude: 0 }}
             title="Driver Location"
-            description={`Driver: ${driverInfo[driverId]?.firstName} ${driverInfo[driverId]?.lastName} 
+            description={`Driver: 
+${driverInfo[driverId]?.firstName} ${driverInfo[driverId]?.lastName} 
 
-Contact: ${driverInfo[driverId]?.contactNumber}
+Contact:
+${driverInfo[driverId]?.contactNumber}
 
 Plate Number: ${driverInfo[driverId]?.busPlateNumber}`}
           />
@@ -303,7 +305,7 @@ Plate Number: ${driverInfo[driverId]?.busPlateNumber}`}
         style={styles.pinLocationButton}
       >
          <Image style={{ width: '75%', height: '130%', resizeMode: 'contain', top: '-15%', left: '-30%', }} source={require('../images/pinloc.png')} />
-        <Text style={styles.pinLocationButtonText}>Pin Location</Text>
+        <Text style={styles.pinLocationButtonText}> Cancel Pinned</Text>
       </TouchableOpacity>
 
       {/* Button to share location */}
@@ -360,11 +362,11 @@ const styles = StyleSheet.create({
   pinLocationButton: {
     position: 'absolute',
     bottom: '8%',
-    left: '20%',
+    left: '15%',
     backgroundColor: 'white',
     // borderColor: '#42047e',
     // borderWidth: 1,
-    width: '28%',
+    width: '29%',
     height: '4%',
     padding: 10,
     borderRadius: 25,
