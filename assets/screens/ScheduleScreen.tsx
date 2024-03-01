@@ -107,6 +107,7 @@ const styles = StyleSheet.create({
     marginBottom: 25,
     width: 360,
     height: 260,
+    elevation: 2, // Add elevation for shadow effect
   },
 });
 

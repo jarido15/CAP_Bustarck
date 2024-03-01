@@ -400,9 +400,12 @@ const styles = StyleSheet.create({
   routeButton: {
     backgroundColor: '#fff',
     padding: 10,
-    borderWidth: 1,
-    borderColor: '#42047e',
     borderRadius: 20,
+    elevation: 5, // Add elevation for shadow effect
+    shadowColor: '#000', // Shadow color
+    shadowOffset: { width: 0, height: 2 }, // Shadow offset
+    shadowOpacity: 0.25, // Shadow opacity
+    shadowRadius: 3.84, // Shadow radius
   },
   openDropdown: {
     borderRadius: 20,
