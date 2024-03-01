@@ -14,7 +14,7 @@ const ScheduleScreen = () => {
 
   const fetchTripInfo = async () => {
     try {
-      const driversSnapshot = await firestore2.collection('Drivers').where('archive', '==', false).get();
+      const driversSnapshot = await firestore2.collection('Drivers').where('archive', '==', false).where('Status', '==', 'active').get();
       const tripsData = [];
   
       for (const driverDoc of driversSnapshot.docs) {
