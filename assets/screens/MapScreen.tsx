@@ -32,7 +32,7 @@ const CustomMarker = ({ coordinate, title, description }) => {
       <Image source={customMarkerImage} style={{ width: 62, height: 62 }} />
       <Callout>
         <View style={styles.calloutContainer}>
-          <Text style={{ color: 'black', fontSize: 11, fontWeight: '900', left: '5%', marginBottom: '-15%' }}>{description}</Text>
+          <Text style={{ color: 'black', fontSize: 11, fontWeight: '900', left: '10%', marginBottom: '-15%' }}>{description}</Text>
         </View>
       </Callout>
     </Marker>
@@ -337,9 +337,9 @@ Plate Number: ${driverInfo[driverId]?.busPlateNumber}`}
             {...panResponder.panHandlers}
           >
             <View style={styles.modalContent}>
-              <Text style={{fontWeight: 'bold', fontSize: 25, top: '-30%', color: 'black'}}>Note!</Text>
+              <Text style={{fontWeight: '900', fontSize: 25, top: '-30%', color: 'red'}}>Reminder!</Text>
               <Image source={require('../images/Line.png')} style={{width: '100%', height: '0.5%', top: '-25%'}}/>
-              <Text style={{fontWeight: '900', fontSize: 20, marginBottom: -25, marginTop: -25, color: 'black', justifyContent: 'space-between'}}> Please turn off your share location once you entered bus, Thank you!</Text>
+              <Text style={{fontWeight: '900', fontSize: 17, marginBottom: -25, marginTop: -25, color: 'black', justifyContent: 'space-between'}}> Please turn off your share location  once you entered bus, Thank you!</Text>
               {/* Button to delete UserLocations data */}
               <TouchableOpacity
                 onPress={() => {
@@ -471,12 +471,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    bottom: '-27%',
+    bottom: '-29%',
   },
   modalContent: {
     backgroundColor: 'white',
     width: '80%',
-    height: '30%',
+    height: '25%',
     borderRadius: 10,
     padding: 20,
     justifyContent: 'center',
@@ -484,10 +484,10 @@ const styles = StyleSheet.create({
   },
   offshare: {
     marginVertical: 10,
-    backgroundColor: 'blue',
+    backgroundColor: '#42047e',
     padding: 10,
     borderRadius: 20,
-    bottom: '-35%'
+    bottom: '-28%'
   },
 });
 
