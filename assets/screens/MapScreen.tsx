@@ -12,6 +12,7 @@ import { ToastAndroid } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 const customMarkerImage = require('../images/busstop.png');
+const { width: windowWidth, height: windowHeight } = Dimensions.get('window');
 
 interface DriverLocation {
   latitude: number;
@@ -445,8 +446,8 @@ const styles = StyleSheet.create({
   },
   shareLocationButton: {
     position: 'absolute',
-    bottom: '22%',
-    right: '-23%',
+    bottom: windowHeight * 0.22,
+    left: windowWidth  * 1.06,
     alignSelf: 'center',
     borderRadius: 5,
   },
