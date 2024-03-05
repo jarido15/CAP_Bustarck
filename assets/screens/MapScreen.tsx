@@ -340,7 +340,7 @@ Plate Number: ${driverInfo[driverId]?.busPlateNumber}`}
             <View style={styles.modalContent}>
               <Text style={{fontWeight: '900', fontSize: 25, top: '-30%', color: 'red'}}>Reminder!</Text>
               <Image source={require('../images/Line.png')} style={{width: '100%', height: '0.5%', top: '-25%'}}/>
-              <Text style={{fontWeight: '900', fontSize: 17, marginBottom: -25, marginTop: -25, color: 'black', justifyContent: 'space-between'}}> Please turn off your share location  once you entered bus, Thank you!</Text>
+              <Text style={{fontWeight: '800', fontSize: 15, marginBottom: -25, marginTop: -25, color: 'black', justifyContent: 'space-between', alignSelf: 'center'}}> "Once you've boarded the bus, remember to turn off the shared location, Thank you!"</Text>
               {/* Button to delete UserLocations data */}
               <TouchableOpacity
                 onPress={() => {
@@ -488,7 +488,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#42047e',
     padding: 10,
     borderRadius: 20,
-    bottom: '-28%'
+    bottom: '-28%',
   },
 });
 
