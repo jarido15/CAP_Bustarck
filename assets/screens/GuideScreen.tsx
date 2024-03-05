@@ -70,19 +70,19 @@ const GuideScreen = ({}) => {
             <View style={styles.modalView}>
               <Text style={styles.modalText}> Allow Location Access </Text>
               <ScrollView style={{ flex: 1, marginBottom: '-35%' }}>
-  <Text style={{ color: 'black', fontSize: 17, top: '3%', fontWeight: '800', justifyContent: 'flex-start' }}>
+  <Text style={{ color: 'black', fontSize: 17, top: '3%', fontWeight: '800', justifyContent: 'flex-start', textAlign: 'justify' }}>
     • Open Settings: Find and tap the "Settings" app on your Android device. It usually looks like a gear icon.
   </Text>
-  <Text style={{ color: 'black', top: '5%', fontSize: 17, fontWeight: '800', justifyContent: 'flex-start' }}>
+  <Text style={{ color: 'black', top: '5%', fontSize: 17, fontWeight: '800', justifyContent: 'flex-start', textAlign: 'justify' }}>
     • Locate Privacy Settings: Scroll down and look for the "Privacy" or "Security & Privacy" option. Tap on it to access privacy settings.
   </Text>
-  <Text style={{ color: 'black', top: '7%', fontSize: 17, fontWeight: '800', justifyContent: 'flex-start' }}>
+  <Text style={{ color: 'black', top: '7%', fontSize: 17, fontWeight: '800', justifyContent: 'flex-start' , textAlign: 'justify'}}>
     • Find Location Access: Within the Privacy settings, locate and tap on the "Location" option. It may be listed under "Permissions" or "Permission Manager."
   </Text>
-  <Text style={{ color: 'black', top: '9%', fontSize: 17, fontWeight: '800', justifyContent: 'flex-start' }}>
+  <Text style={{ color: 'black', top: '9%', fontSize: 17, fontWeight: '800', justifyContent: 'flex-start', textAlign: 'justify' }}>
     • Enable Location Access: You'll see different options for location access, such as "Allow all the time," "Allow only while using the app," or "Deny." Choose the option that best fits your needs. To enable location access for all apps, select "Allow all the time" or "Allow only while using the app" for specific apps.
   </Text>
-  <Text style={{ color: 'black', top: '11%', fontSize: 17, fontWeight: '800', justifyContent: 'flex-start', marginBottom: '25%'}}>
+  <Text style={{ color: 'black', top: '11%', fontSize: 17, fontWeight: '800', justifyContent: 'flex-start', marginBottom: '25%', textAlign: 'justify'}}>
     • Done: You've successfully allowed location access on your Android device. Apps that require location information will now be able to access it according to your selected permission settings.
   </Text>
 </ScrollView>
