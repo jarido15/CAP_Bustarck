@@ -58,25 +58,25 @@ const ScheduleScreen = () => {
           renderItem={({ item, index }) => (
             <View key={index} style={styles.tripContainer}>
                <Text style={{ color: '#42047e', fontWeight: 'bold' }}>Driver:</Text>
-               <Text style={{color: 'black', top: '-7%', left:'35%'}}>{item.firstName} {item.lastName}</Text>
+               <Text style={{color: 'black', top: '-7%', left:'40%'}}>{item.firstName} {item.lastName}</Text>
 
                <Text style={{color: '#42047e', fontWeight: 'bold'}}>Bus Plate Number:</Text> 
-               <Text style={{color: 'black', top: '-7%', left:'35%'}}>{item.busPlateNumber}</Text>
+               <Text style={{color: 'black', top: '-7%', left:'40%'}}>{item.busPlateNumber}</Text>
 
                <Text style={{color: '#42047e', fontWeight: 'bold'}}>Available Seats:</Text>
-               <Text style={{color: 'black', top: '-7%', left:'35%'}}> {item.AvailableSeats}</Text>
+               <Text style={{color: 'black', top: '-7%', left:'40%'}}> {item.AvailableSeats}</Text>
 
                <Text style={{color: '#42047e', fontWeight: 'bold'}}>Date of Trip: </Text>
-               <Text style={{color: 'black', top: '-7%', left:'35%'}}>{item.DateOfTrip}</Text>
+               <Text style={{color: 'black', top: '-7%', left:'40%'}}>{item.DateOfTrip}</Text>
 
                <Text style={{color: '#42047e', fontWeight: 'bold'}}>Available Time:</Text>
-               <Text style={{color: 'black', top: '-7%', left:'35%'}}>{item.AvailableTime}</Text>
+               <Text style={{color: 'black', top: '-7%', left:'40%'}}>{item.AvailableTime}</Text>
 
                <Text style={{color: '#42047e', fontWeight: 'bold'}}>Departure Time:</Text> 
-               <Text style={{color: 'black', top: '-7%', left:'35%'}}>{item.DepartureTime}</Text>
+               <Text style={{color: 'black', top: '-7%', left:'40%'}}>{item.DepartureTime}</Text>
 
                <Text style={{ color: '#42047e', fontWeight: 'bold' }}>Route:</Text>
-               <Text style={{color: 'black', top: '-7%', left:'35%'}}>{item.Route}</Text>
+               <Text style={{color: 'black', top: '-7%', left:'40%'}}>{item.Route}</Text>
 
               {/* Render other trip details as needed */}
             </View>
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     padding: 15,
     marginBottom: 25,
     width: 360,
-    height: 260,
+    height: 'auto',
     elevation: 2, // Add elevation for shadow effect
   },
 });

@@ -33,7 +33,7 @@ const CustomMarker = ({ coordinate, title, description }) => {
       <Image source={customMarkerImage} style={{ width: 62, height: 62 }} />
       <Callout>
         <View style={styles.calloutContainer}>
-          <Text style={{ color: 'black', fontSize: 11, fontWeight: '900', left: '10%', marginBottom: '-15%' }}>{description}</Text>
+          <Text style={{ color: 'black', fontSize: 11, fontWeight: '900', left: 1, }}>{description}</Text>
         </View>
       </Callout>
     </Marker>
@@ -104,46 +104,44 @@ const Mapscreen = () => {
         const query = firestore2.collection('Drivers').where('Route', '==', selectedRoute).where('archive', '==', false).where('Status', '==', 'active');
 
         const unsubscribeCallbacks: (() => void)[] = [];
+        const driverLocations = {}; // Temporary object to hold driver locations
+        const driverInfos = {}; // Temporary object to hold driver information 
 
         query.get().then(snapshot => {
             if (!snapshot.empty) {
-                const driverLocations = {}; // Temporary object to hold driver locations
-                const driverInfos = {}; // Temporary object to hold driver information
-
                 snapshot.forEach(driverDoc => {
                     const driverData = driverDoc.data();
                     const driverId = driverDoc.id;
 
                     console.log('Driver in selected route:', driverId);
-
                     const unsubscribe = driverDoc.ref.collection('Trips')
                         .orderBy('timestamp', 'desc')
                         .limit(1)
                         .onSnapshot(tripsSnapshot => {
-                            // Clear previous driver location and info
-                            const driverLocation = { ...driverLocations };
-                            const driverInfo = { ...driverInfos };
-
                             tripsSnapshot.forEach(tripDoc => {
                                 const driverLocationData = tripDoc.data();
                                 const { latitude, longitude } = driverLocationData;
 
                                 // Update driver location and info only if the route matches
                                 if (driverData.Route === selectedRoute) {
-                                    driverLocation[driverId] = { latitude, longitude };
-                                    driverInfo[driverId] = {
+                                    driverLocations[driverId] = { latitude, longitude };
+                                    driverInfos[driverId] = {
                                         firstName: driverData.firstName,
                                         lastName: driverData.lastName,
                                         contactNumber: driverData.contactNumber,
                                         busPlateNumber: driverData.busPlateNumber,
                                         busId: driverData.busId,
                                     };
+                                } else {
+                                    // Clear driver location and info if the route doesn't match
+                                    delete driverLocations[driverId];
+                                    delete driverInfos[driverId];
                                 }
                             });
 
                             // Update state with the latest driver locations and info
-                            setDriverLocation(driverLocation);
-                            setDriverInfo(driverInfo);
+                            setDriverLocation({ ...driverLocations });
+                            setDriverInfo({ ...driverInfos });
                         });
 
                     unsubscribeCallbacks.push(unsubscribe);
@@ -164,7 +162,7 @@ const Mapscreen = () => {
             setDriverInfo({});
         };
     }
-}, [selectedRoute]);
+}, [selectedRoute]); // Ensure this effect runs when selectedRoute changes
 
 
 
@@ -241,7 +239,7 @@ const Mapscreen = () => {
           onPress={() => setOpen(!open)}
           style={[styles.routeButton, open && styles.openDropdown]}
         >
-          <Text style={styles.routeButtonText}>{selectedRoute || 'Select Route'}</Text>
+          <Text style={styles.routeButtonText}>{selectedRoute || 'Select route here '}</Text>
         </TouchableOpacity>
         {open && (
           <View style={styles.dropdownMenu}>
@@ -278,10 +276,8 @@ const Mapscreen = () => {
             title="Driver Location"
             description={`Driver: 
 ${driverInfo[driverId]?.firstName} ${driverInfo[driverId]?.lastName} 
-
 Contact:
 ${driverInfo[driverId]?.contactNumber}
-
 Plate Number: ${driverInfo[driverId]?.busPlateNumber}`}
           />
         ))}
@@ -306,7 +302,7 @@ Plate Number: ${driverInfo[driverId]?.busPlateNumber}`}
         style={styles.pinLocationButton}
       >
          <Image style={{ width: '75%', height: '130%', resizeMode: 'contain', top: '-15%', left: '-30%', }} source={require('../images/pinloc.png')} />
-        <Text style={styles.pinLocationButtonText}> Cancel Pinned</Text>
+        <Text style={styles.pinLocationButtonText}> Remove pin</Text>
       </TouchableOpacity>
 
       {/* Button to share location */}
@@ -316,7 +312,7 @@ Plate Number: ${driverInfo[driverId]?.busPlateNumber}`}
       >
         <View style={styles.shareLocationBox}>
           <Image style={{ width: '25%', height: '40%', resizeMode: 'contain', top: '30%' }} source={require('../images/shareloc.png')} />
-       <Text style={{fontSize: 12, color: '#42047e', left: '21%', fontWeight: '900', top: '-15%'}}> Share Location</Text>
+       <Text style={{fontSize: 12, color: '#42047e', left: '21%', fontWeight: '900', top: '-15%'}}> Share location</Text>
         </View>
       </TouchableOpacity>
 
@@ -367,8 +363,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     // borderColor: '#42047e',
     // borderWidth: 1,
-    width: '29%',
-    height: '4%',
+    width: 110,
+    height: 37,
     padding: 10,
     borderRadius: 25,
     zIndex: 1,
@@ -377,13 +373,13 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 }, // Shadow offset
     shadowOpacity: 0.25, // Shadow opacity
     shadowRadius: 3.84, // Shadow radius
-  },  
+  },
   pinLocationButtonText: {
     color: '#42047e',
     fontWeight: '900',
     textAlign: 'center',
     fontSize: 12,
-    top: '-145%',
+    top: '-130%',
     left: '5%',
   },
   container: {
@@ -437,7 +433,7 @@ const styles = StyleSheet.create({
   calloutContainer: {
     width: 100,
     height: 100,
-    top: -10,
+    top: -5,
     left: -10,
     backgroundColor: 'white',
     borderRadius: 25,
