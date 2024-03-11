@@ -276,6 +276,7 @@ const Mapscreen = () => {
             title="Driver Location"
             description={`Driver: 
 ${driverInfo[driverId]?.firstName} ${driverInfo[driverId]?.lastName} 
+
 Contact:
 ${driverInfo[driverId]?.contactNumber}
 Plate Number: ${driverInfo[driverId]?.busPlateNumber}`}
