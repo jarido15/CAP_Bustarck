@@ -184,23 +184,31 @@ const Mapscreen = () => {
 
 
 
-  const handleShareLocation = () => {
-    // Proceed to share location only when the Share button is clicked
-    Geolocation.getCurrentPosition(
-      position => {
-        const { latitude, longitude } = position.coords;
-        setUserLocation({ latitude, longitude });
-        saveUserLocationToFirestore(latitude, longitude);
-      },
-      error => {
-        console.error('Error getting user location:', error);
-      },
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-    );
+const handleShareLocation = () => {
+  Geolocation.getCurrentPosition(
+    position => {
+      const { latitude, longitude } = position.coords;
+      setUserLocation({ latitude, longitude });
+      saveUserLocationToFirestore(latitude, longitude);
+    },
+    error => {
+      if (error.code === 2) {
+        // Display a user-friendly message if no location provider is available
+        ToastAndroid.show('Please make sure location services are enabled on your device.', ToastAndroid.SHORT);
+      } else if (error.code === 1) {
+        // Display a custom message for permission denied errors
+        ToastAndroid.show('Please allow the app to access your location.', ToastAndroid.SHORT);
+      } else {
+        // Display a generic error message for other errors
+        ToastAndroid.show('Error getting user location', ToastAndroid.SHORT);
+      }
+    },
+    { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+  );
 
-    // Set modalVisible to true to show the modal
-    setModalVisible(true);
-  };
+  // Set modalVisible to true to show the modal
+  setModalVisible(true);
+};
 
   const deleteUserLocations = () => {
     // Get the reference to the UserLocations collection
