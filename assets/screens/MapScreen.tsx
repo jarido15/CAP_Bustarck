@@ -147,6 +147,21 @@ const Mapscreen = () => {
                         });
 
                     unsubscribeCallbacks.push(unsubscribe);
+
+                    // Listen for changes in AvailableSeats
+                    const availableSeatsUnsubscribe = driverDoc.ref.onSnapshot(doc => {
+                        const driverData = doc.data();
+                        // Update AvailableSeats in driverInfo state
+                        setDriverInfo(prevDriverInfo => ({
+                            ...prevDriverInfo,
+                            [driverId]: {
+                                ...prevDriverInfo[driverId],
+                                AvailableSeats: driverData.AvailableSeats
+                            }
+                        }));
+                    });
+
+                    unsubscribeCallbacks.push(availableSeatsUnsubscribe);
                 });
             }
         }).catch(error => {
@@ -165,6 +180,7 @@ const Mapscreen = () => {
         };
     }
 }, [selectedRoute]); // Ensure this effect runs when selectedRoute changes
+
 
 
 
