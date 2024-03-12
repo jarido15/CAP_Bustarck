@@ -194,7 +194,7 @@ const handleShareLocation = () => {
     error => {
       if (error.code === 2) {
         // Display a user-friendly message if no location provider is available
-        ToastAndroid.show('Please make sure location services are enabled on your device.', ToastAndroid.SHORT);
+        ToastAndroid.show('Turn on your device location services and stay near the highway.', ToastAndroid.SHORT);
       } else if (error.code === 1) {
         // Display a custom message for permission denied errors
         ToastAndroid.show('Please allow the app to access your location.', ToastAndroid.SHORT);
