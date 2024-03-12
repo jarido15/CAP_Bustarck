@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 15,
     padding: 15,
-    marginBottom: 15,
+    marginBottom: 25,
     width: 360,
     height: 'auto',
     elevation: 2, // Add elevation for shadow effect

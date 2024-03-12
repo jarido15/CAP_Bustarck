@@ -3,7 +3,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from 'react-native-screens/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import StartingScreen from './assets/screens/WelcomeScreen';
 import SplashScreen from 'react-native-splash-screen';

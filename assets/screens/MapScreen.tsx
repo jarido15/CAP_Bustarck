@@ -329,7 +329,7 @@ Plate Number: ${driverInfo[driverId]?.busPlateNumber}`}
         onPress={handlePinLocation} // Allow users to pin by pressing the map
         style={styles.pinLocationButton}
       >
-         <Image style={{ width: '75%', height: '130%', resizeMode: 'contain', top: '-15%', left: '-30%', }} source={require('../images/pinloc.png')} />
+         <Image style={{ width: '75%', height: '130%', resizeMode: 'contain', top: '-15%', left: '-30%'}} source={require('../images/pinloc.png')} />
         <Text style={styles.pinLocationButtonText}> Remove pin</Text>
       </TouchableOpacity>
 
@@ -386,16 +386,15 @@ Plate Number: ${driverInfo[driverId]?.busPlateNumber}`}
 const styles = StyleSheet.create({
   pinLocationButton: {
     position: 'absolute',
-    bottom: '8%',
-    left: '15%',
+    bottom: windowHeight * 0.09,
+    left: windowWidth  * 0.16,
     backgroundColor: 'white',
     // borderColor: '#42047e',
     // borderWidth: 1,
-    width: 110,
-    height: 37,
+    width: 100,
+    height: 35,
     padding: 10,
     borderRadius: 25,
-    zIndex: 1,
     elevation: 5, // Add elevation for shadow effect
     shadowColor: '#000', // Shadow color
     shadowOffset: { width: 0, height: 2 }, // Shadow offset
@@ -407,7 +406,7 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     textAlign: 'center',
     fontSize: 12,
-    top: '-130%',
+    top: '-135%',
     left: '5%',
   },
   container: {
@@ -470,18 +469,15 @@ const styles = StyleSheet.create({
   },
   shareLocationButton: {
     position: 'absolute',
-    bottom: windowHeight * 0.22,
-    left: windowWidth  * 1.06,
+    bottom: windowHeight * 0.09,
+    left: windowWidth  * 0.58,
     alignSelf: 'center',
-    borderRadius: 5,
   },
   shareLocationBox: {
     backgroundColor: 'white',
     borderRadius: 25,
-    width: '145%',
-    height: '235%',
-    left: '-245%',
-    top: '630%',
+    width: 110,
+    height: 35,
     elevation: 5, // Add elevation for shadow effect
     shadowColor: '#000', // Shadow color
     shadowOffset: { width: 0, height: 2 }, // Shadow offset
