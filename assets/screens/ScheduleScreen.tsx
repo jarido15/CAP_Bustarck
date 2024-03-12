@@ -98,13 +98,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 20,
     paddingTop: 20,
-    paddingBottom: 20,
+    paddingBottom: 25,
   },
   tripContainer: {
     backgroundColor: 'white',
     borderRadius: 15,
     padding: 15,
-    marginBottom: 25,
+    marginBottom: 15,
     width: 360,
     height: 'auto',
     elevation: 2, // Add elevation for shadow effect

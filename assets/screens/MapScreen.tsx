@@ -20,6 +20,7 @@ interface DriverLocation {
 }
 
 interface DriverInfo {
+  AvailableSeats: any;
   firstName: string;
   lastName: string;
   contactNumber: string;
@@ -33,7 +34,7 @@ const CustomMarker = ({ coordinate, title, description }) => {
       <Image source={customMarkerImage} style={{ width: 62, height: 62 }} />
       <Callout>
         <View style={styles.calloutContainer}>
-          <Text style={{ color: 'black', fontSize: 11, fontWeight: '900', left: 1, }}>{description}</Text>
+          <Text style={{ color: 'black', fontSize: 10, fontWeight: '900', left: 1, }}>{description}</Text>
         </View>
       </Callout>
     </Marker>
@@ -131,6 +132,7 @@ const Mapscreen = () => {
                                         contactNumber: driverData.contactNumber,
                                         busPlateNumber: driverData.busPlateNumber,
                                         busId: driverData.busId,
+                                        AvailableSeats: driverData.AvailableSeats,
                                     };
                                 } else {
                                     // Clear driver location and info if the route doesn't match
@@ -276,9 +278,10 @@ const Mapscreen = () => {
             title="Driver Location"
             description={`Driver: 
 ${driverInfo[driverId]?.firstName} ${driverInfo[driverId]?.lastName} 
-
 Contact:
 ${driverInfo[driverId]?.contactNumber}
+Available Seats:
+${driverInfo[driverId]?.AvailableSeats}
 Plate Number: ${driverInfo[driverId]?.busPlateNumber}`}
           />
         ))}
@@ -434,7 +437,7 @@ const styles = StyleSheet.create({
   calloutContainer: {
     width: 100,
     height: 100,
-    top: -5,
+    top: -1,
     left: -10,
     backgroundColor: 'white',
     borderRadius: 25,
