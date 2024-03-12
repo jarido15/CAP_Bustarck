@@ -34,7 +34,7 @@ const CustomMarker = ({ coordinate, title, description }) => {
       <Image source={customMarkerImage} style={{ width: 62, height: 62 }} />
       <Callout>
         <View style={styles.calloutContainer}>
-          <Text style={{ color: 'black', fontSize: 10, fontWeight: '900', left: 1, }}>{description}</Text>
+          <Text style={{ color: 'black', fontSize: 10, fontWeight: '900', left: '10%', }}>{description}</Text>
         </View>
       </Callout>
     </Marker>
