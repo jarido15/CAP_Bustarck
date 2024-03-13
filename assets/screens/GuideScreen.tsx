@@ -27,7 +27,7 @@ const GuideScreen = ({}) => {
         </View>
 
         <View style={styles.container}>
-        <Image source={require('../images/bus-stop.png')} style={styles.bus}/>
+        <Image source={require('../images/bus1.png')} style={styles.bus}/>
         <TouchableOpacity onPress={() => setBusTripModalVisible(true)}>
           <View style={styles.containerWithShadow2}>
             <Text style={{color: '#42047e', fontSize: 20, fontWeight: '900', textAlign: 'center'}}> Bus Trip Schedules Guide</Text>
