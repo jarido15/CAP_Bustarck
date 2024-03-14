@@ -51,7 +51,7 @@ const ScheduleScreen = () => {
   return (
     <View style={styles.container}>
       {trips.length === 0 ? (
-         <Text  style={{color: '#727272'}}>No trips available</Text>
+         <Text  style={{color: '#727272'}}>Loading available setTrips...</Text>
       ) : (
         <FlatList
           data={trips}
