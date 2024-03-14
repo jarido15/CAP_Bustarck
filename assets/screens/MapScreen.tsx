@@ -1,12 +1,12 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable quotes */
- /* eslint-disable react-native/no-inline-styles */
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import React, { useState, useRef, useEffect } from 'react';
 import { StyleSheet, View, Text, Dimensions, Image, BackHandler, Alert, TouchableOpacity, Modal, PanResponder, TouchableWithoutFeedback } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import { useNavigation } from '@react-navigation/native';
-import { firestore3, auth3, firestore2 } from '../screens/firebase';
+import { firestore3, auth3, firestore2 } from '../screens/firebase'; // Import firestore3 instance
 import Geolocation from '@react-native-community/geolocation';
 import { ToastAndroid } from 'react-native';
 
@@ -181,9 +181,6 @@ const Mapscreen = () => {
     }
 }, [selectedRoute]); // Ensure this effect runs when selectedRoute changes
 
-
-
-
 const handleShareLocation = () => {
   Geolocation.getCurrentPosition(
     position => {
@@ -248,8 +245,30 @@ const handleShareLocation = () => {
   const handleSelectRoute = (Route) => {
     setSelectedRoute(Route);
     setOpen(false);
+    // Save selected route to UserLocations collection
+    saveSelectedRouteToFirestore(Route);
     // Show native Android toast message
     ToastAndroid.show(`Selected Route: ${Route}`, ToastAndroid.SHORT);
+  };
+
+  const saveSelectedRouteToFirestore = (selectedRoute) => {
+    // Get the reference to the UserLocations collection
+    const userLocationsRef = firestore3.collection('UserLocations');
+
+    // Add a new document with a generated ID to the UserLocations collection
+    userLocationsRef
+      .add({
+        userId: auth3.currentUser.uid,
+        status: "active",
+        Route: selectedRoute, // Save selected route
+        timestamp: new Date()
+      })
+      .then(() => {
+        console.log('Selected route saved to Firestore');
+      })
+      .catch(error => {
+        console.error('Error saving selected route to Firestore:', error);
+      });
   };
 
   const handlePinLocation = (event) => {
