@@ -60,7 +60,7 @@ const ScheduleScreen = () => {
                <Text style={{ color: '#42047e', fontWeight: 'bold' }}>Driver:</Text>
                <Text style={{color: 'black', top: '-7%', left:'40%'}}>{item.firstName} {item.lastName}</Text>
 
-               <Text style={{color: '#42047e', fontWeight: 'bold'}}>Bus Plate Number:</Text> 
+               <Text style={{color: '#42047e', fontWeight: 'bold'}}>Bus Plate Number:</Text>
                <Text style={{color: 'black', top: '-7%', left:'40%'}}>{item.busPlateNumber}</Text>
 
                <Text style={{color: '#42047e', fontWeight: 'bold'}}>Available Seats:</Text>
@@ -72,7 +72,7 @@ const ScheduleScreen = () => {
                <Text style={{color: '#42047e', fontWeight: 'bold'}}>Available Time:</Text>
                <Text style={{color: 'black', top: '-7%', left:'40%'}}>{item.AvailableTime}</Text>
 
-               <Text style={{color: '#42047e', fontWeight: 'bold'}}>Departure Time:</Text> 
+               <Text style={{color: '#42047e', fontWeight: 'bold'}}>Departure Time:</Text>
                <Text style={{color: 'black', top: '-7%', left:'40%'}}>{item.DepartureTime}</Text>
 
                <Text style={{ color: '#42047e', fontWeight: 'bold' }}>Route:</Text>
